@@ -1,0 +1,19 @@
+<h1>Clock alarm</h1>
+
+{% if alarm_manager.is_set() %}
+Une alarme est branchée pour sonner à {{ alarm_manager.clock_datetime }} pour jouer {{ alarm_manager.playlist.name }}
+{% else %}
+pas d'alarme branchée
+{% end %}
+
+<p>
+    <form name="input" action="." method="post">
+        <input type="text" name="datetime"/><br/>
+        <select name="playlist">
+            {% for playlist in playlists %}
+                <option value="{{ playlist.uri }}">{{ playlist.name }}</option>
+            {% end %}
+        </select><br/>
+        <input type="submit" value="Submit">
+    </form> 
+</p>
