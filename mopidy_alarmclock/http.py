@@ -106,6 +106,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         time_string = self.get_argument('time', None)
         #RE found here http://stackoverflow.com/questions/7536755/regular-expression-for-matching-hhmm-time-format
         matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time_string)
+        shuffle_mode = bool(self.get_argument('shuffle', False))
 
         if matched:
             time_comp = map(lambda x: int(x), matched.groups())
@@ -117,7 +118,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
 
             dt = datetime.datetime.combine(date, time)
 
-            self.alarm_manager.set_alarm(self.core, dt, playlist, False) #TODO False mode shuffle
+            self.alarm_manager.set_alarm(self.core, dt, playlist, shuffle_mode)
             self.send_message('ok')
         else:
             self.send_message('format')
