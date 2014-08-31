@@ -1,25 +1,87 @@
-<h1>Clock alarm</h1>
+{% extends "base.html" %}
+
+{% block content %}
 
 {% if message %}
-    <p>{{ message }}</p>
+    <div class="alert alert-{{ message[1] }}">
+        <p>{{ message[0] }}</p>
+    </div>
 {% end %}
 
-<p>
+
 {% if alarm_manager.is_set() %}
-Une alarme est branchée pour sonner à {{ alarm_manager.clock_datetime }} pour jouer {{ alarm_manager.playlist.name }}. <a href="/alarmclock/cancel/">Cancel</a>
-{% else %}
-pas d'alarme branchée
-{% end %}
-</p>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Alarm state</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            The alarm will start at {{ alarm_manager.get_ring_time() }} and play playlist {{ alarm_manager.playlist.name }}.<br/>
+           
+            <a role="button" class="btn btn-success btn-large btn-warning" href="/alarmclock/cancel/">Cancel alarm</a>
+        </p>
+    </div>
+</div>
 
-<p>
-    <form name="input" action="/alarmclock/set/" method="post"> <!-- TODO proper mention of the app name instead of putting it raw in the URL-->
-        <input type="text" name="datetime"/><br/>
-        <select name="playlist">
-            {% for playlist in playlists %}
-                <option value="{{ playlist.uri }}">{{ playlist.name }}</option>
-            {% end %}
-        </select><br/>
-        <input type="submit" value="Submit">
-    </form> 
-</p>
+{% else %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Alarm state</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            No alarm has been set.
+    
+            <form class="form-horizontal" action="/alarmclock/set/" method="post"> <!-- TODO proper mention of the app name instead of putting it raw in the URL-->
+
+            <fieldset>
+
+            <legend>Set an alarm</legend>
+
+            <div class="form-group clockpicker">
+              <label class="col-md-4 control-label" for="time">Hour</label>
+              <div class="col-md-4">
+                <input type="text" name="time" class="form-control" value="08:00">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="playlist">Playlist</label>
+              <div class="col-md-4">
+                <select id="playlist" name="playlist" class="form-control">
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.uri }}">{{ playlist.name }}</option>
+                    {% end %}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="checkboxes">Shuffle Mode</label>
+              <div class="col-md-4">
+                <label class="checkbox-inline" for="checkboxes-0">
+                  <input name="shuffle" id="checkboxes-0" value="1" type="checkbox">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+                    <input type="submit" class="btn btn-primary" value="Submit">
+            </div>
+
+           </fieldset>
+
+            </form>
+        </p>
+
+    </div>
+</div>
+{% end %}
+
+{% end %}
+
+{% block extra-js %}
+<script type="text/javascript">
+$('.clockpicker').clockpicker({'autoclose':true});
+</script>
+{% end %}

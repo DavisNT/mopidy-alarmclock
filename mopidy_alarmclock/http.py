@@ -1,13 +1,10 @@
 from __future__ import unicode_literals
 
-import os
-
 import tornado.web, tornado.template
 
 from mopidy import ext
 
-import logging, time
-from datetime import datetime
+import logging, time, datetime, os, re
 from threading import Timer
 
 logging.getLogger(__name__)
@@ -16,10 +13,9 @@ template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
 
 MESSAGES = {
-    'ok':'Alarm has been properly set.',
-    'past':'The date you specified is in the past.',
-    'format':'The date\'s format you specified is incorrect.',
-    'cancel':'Alarm has been canceled.',
+    'ok': ('Alarm has been properly set.','success'),
+    'format': ('The date\'s format you specified is incorrect.','danger'),
+    'cancel': ('Alarm has been canceled.','success'),
 }
 
 #Enum of states
@@ -37,6 +33,9 @@ class AlarmManager(object):
 
     def is_set(self):
         return (self.state == states.WAITING)
+
+    def get_ring_time(self):
+        return self.clock_datetime.strftime('%H:%M')
 
     def reset(self):
         self.clock_datetime = None
@@ -70,7 +69,7 @@ class AlarmManager(object):
 
     def idle(self):
         if self.state == states.WAITING: #alarm can be canceled, check if not
-            if datetime.now() > self.clock_datetime: #time to make some noise
+            if datetime.datetime.now() > self.clock_datetime: #time to make some noise
                 self.play()
             else:
                 t = Timer(60, self.idle) #check each minute if the clock must start or not
@@ -103,18 +102,25 @@ class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
         playlist = self.get_argument('playlist',None)
         playlist = self.core.playlists.lookup(playlist).get()
-        datetime_string = self.get_argument('datetime', None)
-        try:
-            date = datetime.fromtimestamp(time.mktime(time.strptime(datetime_string, '%d/%m/%Y %H:%M')))
-        except ValueError: #incorrect date format
-            date = None
-        if not date:
-            self.send_message('format')
-        elif date <= datetime.today():
-            self.send_message('past')
-        else:
-            self.alarm_manager.set_alarm(self.core, date, playlist, False) #TODO False mode shuffle
+
+        time_string = self.get_argument('time', None)
+        #RE found here http://stackoverflow.com/questions/7536755/regular-expression-for-matching-hhmm-time-format
+        matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time_string)
+
+        if matched:
+            time_comp = map(lambda x: int(x), matched.groups())
+            time = datetime.time(hour=time_comp[0], minute=time_comp[1])
+
+            date = datetime.datetime.now()
+            if datetime.datetime.now().hour >= time.hour and datetime.datetime.now().minute >= time.minute:
+                date += datetime.timedelta(days=1)
+
+            dt = datetime.datetime.combine(date, time)
+
+            self.alarm_manager.set_alarm(self.core, dt, playlist, False) #TODO False mode shuffle
             self.send_message('ok')
+        else:
+            self.send_message('format')
 
 class CancelAlarmRequestHandler(BaseRequestHandler):
     def get(self):
@@ -125,9 +131,11 @@ class CancelAlarmRequestHandler(BaseRequestHandler):
 def factory_decorator(alarm_manager):
     def app_factory(config, core):
         #since all of mine RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager})
+        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager}) #TODO pass core here ?
 
         return [
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
+
             bind('/', MainRequestHandler),
             bind('/set/', SetAlarmRequestHandler),
             bind('/cancel/', CancelAlarmRequestHandler),
