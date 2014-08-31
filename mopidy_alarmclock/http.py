@@ -2,78 +2,18 @@ from __future__ import unicode_literals
 
 import tornado.web, tornado.template
 
-from mopidy import ext
-
 import logging, time, datetime, os, re
-from threading import Timer
 
-logging.getLogger(__name__)
+#logging.getLogger(__name__)
 
 template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
 
 MESSAGES = {
-    'ok': ('Alarm has been properly set.','success'),
-    'format': ('The date\'s format you specified is incorrect.','danger'),
-    'cancel': ('Alarm has been canceled.','success'),
+    'ok': (u'Alarm has been properly set.','success'),
+    'format': (u'The date\'s format you specified is incorrect.','danger'),
+    'cancel': (u'Alarm has been canceled.','success'),
 }
-
-#Enum of states
-class states:
-    DISABLED = 1
-    WAITING = 2
-    CANCELED = 3
-
-class AlarmManager(object):
-    clock_datetime = None #datetime of when the alarm clock begins to play music
-    playlist = None #playlist to play
-    shuffle_mode = False #True if the playlist will be played in shuffle mode
-    core = None
-    state = states.DISABLED
-
-    def is_set(self):
-        return (self.state == states.WAITING)
-
-    def get_ring_time(self):
-        return self.clock_datetime.strftime('%H:%M')
-
-    def reset(self):
-        self.clock_datetime = None
-        self.playlist = None
-        self.shuffle_mode = False
-
-    def cancel(self):
-        self.reset()
-        self.state = states.CANCELED
-
-    def set_alarm(self, core, clock_datetime, playlist, mode):
-        self.core = core
-        self.clock_datetime = clock_datetime
-        self.playlist = playlist
-        self.shuffle_mode = mode
-        self.state = states.WAITING
-
-        self.idle()
-
-    def play(self):
-        self.core.playback.stop()
-        self.core.tracklist.clear()
-        self.core.tracklist.add(self.playlist.tracks)
-        if self.shuffle_mode:
-            self.core.tracklist.shuffle()
-
-        self.core.playback.play()
-
-        self.reset()
-        self.state = states.DISABLED
-
-    def idle(self):
-        if self.state == states.WAITING: #alarm can be canceled, check if not
-            if datetime.datetime.now() > self.clock_datetime: #time to make some noise
-                self.play()
-            else:
-                t = Timer(60, self.idle) #check each minute if the clock must start or not
-                t.start()
 
 class BaseRequestHandler(tornado.web.RequestHandler):
     def initialize(self, core, alarm_manager):
@@ -118,7 +58,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
 
             dt = datetime.datetime.combine(date, time)
 
-            self.alarm_manager.set_alarm(self.core, dt, playlist, shuffle_mode)
+            self.alarm_manager.set_alarm(dt, playlist, shuffle_mode)
             self.send_message('ok')
         else:
             self.send_message('format')
@@ -129,10 +69,11 @@ class CancelAlarmRequestHandler(BaseRequestHandler):
         self.send_message('cancel')
 
 #little hack to pass a persistent instance (alarm_manager) to the handler
+#and pass the instance of mopidy.Core to the AlarmManager (via get_core)
 def factory_decorator(alarm_manager):
     def app_factory(config, core):
-        #since all of mine RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager}) #TODO pass core here ?
+        #since all the RequestHandler-classes get the same arguments ...
+        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager.get_core(core)})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),

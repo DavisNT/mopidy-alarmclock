@@ -10,14 +10,6 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Number of PyPI downloads
 
-.. image:: https://img.shields.io/travis/Zashas/mopidy-alarmclock/master.png?style=flat
-    :target: https://travis-ci.org/Zashas/mopidy-alarmclock
-    :alt: Travis CI build status
-
-.. image:: https://img.shields.io/coveralls/Zashas/mopidy-alarmclock/master.svg?style=flat
-   :target: https://coveralls.io/r/Zashas/mopidy-alarmclock?branch=master
-   :alt: Test coverage
-
 A Mopidy extension for using it as an alarm clock.
 
 
@@ -28,19 +20,16 @@ Install by running::
 
     pip install Mopidy-AlarmClock
 
-Or, if available, install the Debian/Ubuntu package from `apt.mopidy.com
-<http://apt.mopidy.com/>`_.
-
 
 Configuration
 =============
 
-Before starting Mopidy, you must add configuration for
-Mopidy-AlarmClock to your Mopidy configuration file::
+This extension requires no configuration.
 
-    [alarmclock]
-    # TODO: Add example of extension config
+Usage
+=============
 
+Make sure that the [HTTP extension](http://docs.mopidy.com/en/latest/ext/http/) is enabled. Then browse to the app on the Mopidy server (for instance, http://localhost:6680/alarmclock/).
 
 Project resources
 =================
