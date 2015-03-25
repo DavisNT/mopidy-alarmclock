@@ -46,8 +46,15 @@ class AlarmManager(object):
         self.core.playback.stop()
         self.core.tracklist.clear()
         self.core.tracklist.add(self.playlist.tracks)
-        if self.shuffle_mode:
-            self.core.tracklist.shuffle()
+
+        self.core.tracklist.repeat = True
+
+        self.core.tracklist.random = self.shuffle_mode
+        if self.core.tracklist.random:
+            self.core.playback.next()
+
+        self.core.mixer.set_mute(False)
+        self.core.mixer.set_volume(100)
 
         self.core.playback.play()
 
