@@ -53,8 +53,8 @@ class AlarmManager(object):
         if self.core.tracklist.random:
             self.core.playback.next()
 
-        self.core.mixer.set_mute(False)
-        self.core.mixer.set_volume(100)
+        self.core.playback.mute = False
+        self.core.playback.volume = 100
 
         self.core.playback.play()
 
