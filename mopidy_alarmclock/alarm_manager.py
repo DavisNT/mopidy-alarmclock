@@ -56,10 +56,10 @@ class AlarmManager(object):
 
     def idle(self):
         if self.state == states.WAITING: #alarm can be canceled, check if not
-            if datetime.datetime.now() > self.clock_datetime: #time to make some noise
+            if datetime.datetime.now() >= self.clock_datetime: #time to make some noise
                 self.play()
             else:
-                t = Timer(60, self.idle) #check each minute if the alarm must start or not
+                t = Timer(10, self.idle) #check each minute if the alarm must start or not
                 t.start()
 
 
