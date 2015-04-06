@@ -34,9 +34,9 @@ Make sure that the [HTTP extension](http://docs.mopidy.com/en/latest/ext/http/) 
 Project resources
 =================
 
-- `Source code <https://github.com/Zashas/mopidy-alarmclock>`_
-- `Issue tracker <https://github.com/Zashas/mopidy-alarmclock/issues>`_
-- `Development branch tarball <https://github.com/Zashas/mopidy-alarmclock/archive/master.tar.gz#egg=Mopidy-AlarmClock-dev>`_
+- `Source code <https://github.com/DavisNT/mopidy-alarmclock>`_
+- `Issue tracker <https://github.com/DavisNT/mopidy-alarmclock/issues>`_
+- `Development branch tarball <https://github.com/DavisNT/mopidy-alarmclock/archive/master.tar.gz#egg=Mopidy-AlarmClock-dev>`_
 
 
 Changelog
