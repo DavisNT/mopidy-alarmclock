@@ -42,6 +42,14 @@ Project resources
 Changelog
 =========
 
+v0.1.1
+----------------------------------------
+
+- Fixed setup (+ minor technical fixes).
+- Automatically unmute and set volume to 100%.
+- Updated Shuffle method.
+- Timer resolution is now 5 sec.
+
 v0.1.0 (UNRELEASED)
 ----------------------------------------
 

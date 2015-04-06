@@ -66,7 +66,7 @@ class AlarmManager(object):
             if datetime.datetime.now() >= self.clock_datetime: #time to make some noise
                 self.play()
             else:
-                t = Timer(10, self.idle) #check each minute if the alarm must start or not
+                t = Timer(5, self.idle) #check each 5 seconds if the alarm must start or not
                 t.start()
 
 

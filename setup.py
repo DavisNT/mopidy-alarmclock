@@ -14,10 +14,12 @@ def get_version(filename):
 setup(
     name='Mopidy-AlarmClock',
     version=get_version('mopidy_alarmclock/__init__.py'),
-    url='https://github.com/Zashas/mopidy-alarmclock',
+    url='https://github.com/DavisNT/mopidy-alarmclock',
     license='Apache License, Version 2.0',
     author='Mathieu Xhonneux',
     author_email='m.xhonneux@gmail.com',
+    maintainer='Davis Mosenkovs',
+    maintainer_email='python-apps@dm.id.lv',
     description='A Mopidy extension for using it as an alarm clock.',
     long_description=open('README.rst').read(),
     packages=find_packages(exclude=['tests', 'tests.*']),
