@@ -11,7 +11,7 @@ class states:
 class AlarmManager(object):
     clock_datetime = None #datetime of when the alarm clock begins to play music
     playlist = None #playlist to play
-    shuffle_mode = False #True if the playlist will be played in shuffle mode
+    random_mode = False #True if the playlist will be played in shuffle mode
     core = None
     state = states.DISABLED
 
@@ -28,16 +28,16 @@ class AlarmManager(object):
     def reset(self):
         self.clock_datetime = None
         self.playlist = None
-        self.shuffle_mode = False
+        self.random_mode = False
 
     def cancel(self):
         self.reset()
         self.state = states.CANCELED
 
-    def set_alarm(self, clock_datetime, playlist, mode):
+    def set_alarm(self, clock_datetime, playlist, random_mode):
         self.clock_datetime = clock_datetime
         self.playlist = playlist
-        self.shuffle_mode = mode
+        self.random_mode = random_mode
         self.state = states.WAITING
 
         self.idle()
@@ -49,7 +49,7 @@ class AlarmManager(object):
 
         self.core.tracklist.repeat = True
 
-        self.core.tracklist.random = self.shuffle_mode
+        self.core.tracklist.random = self.random_mode
         if self.core.tracklist.random:
             self.core.playback.next()
 
