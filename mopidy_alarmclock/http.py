@@ -52,11 +52,9 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             time_comp = map(lambda x: int(x), matched.groups())
             time = datetime.time(hour=time_comp[0], minute=time_comp[1])
 
-            date = datetime.datetime.now()
-            if datetime.datetime.now().hour >= time.hour and datetime.datetime.now().minute >= time.minute:
-                date += datetime.timedelta(days=1)
-
-            dt = datetime.datetime.combine(date, time)
+            dt = datetime.datetime.combine(datetime.datetime.now(), time)
+            if datetime.datetime.now() >= dt:
+                dt += datetime.timedelta(days=1)
 
             self.alarm_manager.set_alarm(dt, playlist, shuffle_mode)
             self.send_message('ok')
