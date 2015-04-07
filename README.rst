@@ -42,6 +42,12 @@ Project resources
 Changelog
 =========
 
+v0.1.2
+----------------------------------------
+
+- Fixed alarm starting immediately in some situations.
+- Renamed *Shuffle Mode* to *Random Track Order*.
+
 v0.1.1
 ----------------------------------------
 
