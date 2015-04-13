@@ -29,7 +29,7 @@ This extension requires no configuration.
 Usage
 =============
 
-Make sure that the [HTTP extension](http://docs.mopidy.com/en/latest/ext/http/) is enabled. Then browse to the app on the Mopidy server (for instance, http://localhost:6680/alarmclock/).
+Make sure that the `HTTP extension <http://docs.mopidy.com/en/latest/ext/http/>`_ is enabled. Then browse to the app on the Mopidy server (for instance, http://localhost:6680/alarmclock/).
 
 Project resources
 =================
@@ -51,6 +51,7 @@ v0.1.2
 v0.1.1
 ----------------------------------------
 
+- Project taken over by `Davis Mosenkovs <https://github.com/DavisNT>`_
 - Fixed setup (+ minor technical fixes).
 - Automatically unmute and set volume to 100%.
 - Updated Shuffle method.
@@ -59,4 +60,5 @@ v0.1.1
 v0.1.0 (UNRELEASED)
 ----------------------------------------
 
+- Created by `Mathieu Xhonneux <https://github.com/Zashas>`_
 - Initial release.
