@@ -12,6 +12,7 @@ Mopidy-AlarmClock
 
 A Mopidy extension for using it as an alarm clock.
 
+Mopidy-AlarmClock was originally created by `Mathieu Xhonneux <https://github.com/Zashas>`_ and now is maintained by `Davis Mosenkovs <https://github.com/DavisNT>`_.
 
 Installation
 ============
