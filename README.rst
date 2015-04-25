@@ -61,7 +61,7 @@ v0.1.1
 ----------------------------------------
 
 - Project taken over by `Davis Mosenkovs <https://github.com/DavisNT>`_.
-- Project moved from `Zashas <https://github.com/Zashas>`_/`mopidy-alarmclock <https://github.com/Zashas/mopidy-alarmclock>`_ to `DavisNT <https://github.com/DavisNT>`_/`mopidy-alarmclock <https://github.com/DavisNT/mopidy-alarmclock>`_
+- Project moved from `Zashas/mopidy-alarmclock <https://github.com/Zashas/mopidy-alarmclock>`_ to `DavisNT/mopidy-alarmclock <https://github.com/DavisNT/mopidy-alarmclock>`_.
 - Fixed setup (+ minor technical fixes).
 - Automatically unmute and set volume to 100%.
 - Updated Shuffle method.
