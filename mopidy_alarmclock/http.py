@@ -48,6 +48,14 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time_string)
         random_mode = bool(self.get_argument('random', False))
 
+        # Get and sanitize volume and seconds to full volume
+        volume = int(self.get_argument('volume', 100))
+        volume_increase_seconds = int(self.get_argument('incsec', 0))
+        if volume < 1 or volume > 100:
+            volume = 100
+        if volume_increase_seconds < 0 or volume_increase_seconds > 300:
+            volume_increase_seconds = 0
+
         if matched:
             time_comp = map(lambda x: int(x), matched.groups())
             time = datetime.time(hour=time_comp[0], minute=time_comp[1])
@@ -56,7 +64,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             if datetime.datetime.now() >= dt:
                 dt += datetime.timedelta(days=1)
 
-            self.alarm_manager.set_alarm(dt, playlist, random_mode)
+            self.alarm_manager.set_alarm(dt, playlist, random_mode, volume, volume_increase_seconds)
             self.send_message('ok')
         else:
             self.send_message('format')

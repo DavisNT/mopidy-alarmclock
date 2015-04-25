@@ -43,6 +43,13 @@ Project resources
 Changelog
 =========
 
+dev
+----------------------------------------
+
+- Added adjustable volume and gradually increasing volume.
+- Minor internal code changes and interface changes.
+- Updated README/Changelog.
+
 v0.1.2
 ----------------------------------------
 
