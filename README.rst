@@ -43,6 +43,11 @@ Project resources
 Changelog
 =========
 
+dev
+----------------------------------------
+
+- Fixed README (to be parsable by PyPI).
+
 v0.1.3
 ----------------------------------------
 
