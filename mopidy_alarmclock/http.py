@@ -16,19 +16,21 @@ MESSAGES = {
 }
 
 class BaseRequestHandler(tornado.web.RequestHandler):
-    def initialize(self, core, alarm_manager):
+    def initialize(self, core, alarm_manager, msg_store):
         self.core = core
         self.alarm_manager = alarm_manager
+        self.msg_store = msg_store
 
     def send_message(self, code):
-        self.redirect('/alarmclock/?msg=%s' % code)
+        self.msg_store.msg_code = code
+        self.redirect('/alarmclock/')
 
 class MainRequestHandler(BaseRequestHandler):
     def get(self):
         message = None
-        msg_code = self.get_argument('msg',None)
-        if msg_code and msg_code in MESSAGES:
-            message = MESSAGES[msg_code]
+        if self.msg_store.msg_code and self.msg_store.msg_code in MESSAGES:
+            message = MESSAGES[self.msg_store.msg_code]
+            self.msg_store.msg_code = None
 
         playlists = self.core.playlists.playlists.get()
 
@@ -74,12 +76,15 @@ class CancelAlarmRequestHandler(BaseRequestHandler):
         self.alarm_manager.cancel()
         self.send_message('cancel')
 
+class MessageStore(object):
+    msg_code = None #Message to be stored
+
 #little hack to pass a persistent instance (alarm_manager) to the handler
 #and pass the instance of mopidy.Core to the AlarmManager (via get_core)
-def factory_decorator(alarm_manager):
+def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         #since all the RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager.get_core(core)})
+        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager.get_core(core), 'msg_store':msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),

@@ -5,7 +5,7 @@ import os
 
 from mopidy import config, ext
 
-from http import factory_decorator
+from http import factory_decorator, MessageStore
 from alarm_manager import AlarmManager
 
 
@@ -29,7 +29,8 @@ class Extension(ext.Extension):
 
     def setup(self, registry):
         alarm_manager = AlarmManager()
+        msg_store = MessageStore()
         registry.add('http:app', {
             'name': self.ext_name,
-            'factory': factory_decorator(alarm_manager),
+            'factory': factory_decorator(alarm_manager, msg_store),
         })
