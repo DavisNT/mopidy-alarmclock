@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-from mopidy_alarmclock import Extension, frontend as frontend_lib
+from mopidy_alarmclock import Extension
 
 
 class ExtensionTest(unittest.TestCase):
@@ -14,14 +14,5 @@ class ExtensionTest(unittest.TestCase):
 
         self.assertIn('[alarmclock]', config)
         self.assertIn('enabled = true', config)
-
-    def test_get_config_schema(self):
-        ext = Extension()
-
-        schema = ext.get_config_schema()
-
-        # TODO Test the content of your config schema
-        #self.assertIn('username', schema)
-        #self.assertIn('password', schema)
 
     # TODO Write more tests
