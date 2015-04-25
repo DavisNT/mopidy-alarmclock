@@ -43,10 +43,11 @@ Project resources
 Changelog
 =========
 
-dev
+v0.1.3
 ----------------------------------------
 
 - Added adjustable volume and gradually increasing volume.
+- Fixed stale message appearing on page reload.
 - Minor internal code changes and interface changes.
 - Updated README/Changelog.
 

@@ -9,7 +9,7 @@ from http import factory_decorator, MessageStore
 from alarm_manager import AlarmManager
 
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 #logger = logging.getLogger(__name__)
 
