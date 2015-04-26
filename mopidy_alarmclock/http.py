@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
+
 import datetime
 import os
 import re
+
 import tornado.template
 import tornado.web
 
@@ -45,11 +47,11 @@ class MainRequestHandler(BaseRequestHandler):
 
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
-        playlist = self.get_argument('playlist',None)
+        playlist = self.get_argument('playlist', None)
         playlist = self.core.playlists.lookup(playlist).get()
 
         time_string = self.get_argument('time', None)
-        #RE found here http://stackoverflow.com/questions/7536755/regular-expression-for-matching-hhmm-time-format
+        # RE found here http://stackoverflow.com/questions/7536755/regular-expression-for-matching-hhmm-time-format
         matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time_string)
         random_mode = bool(self.get_argument('random', False))
 
@@ -90,7 +92,7 @@ class MessageStore(object):
 def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         # since all the RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
+        bind = lambda url, klass: (url, klass, {'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),

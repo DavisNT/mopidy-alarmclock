@@ -1,11 +1,8 @@
 from __future__ import unicode_literals
 
 import os
-
-from mopidy import config, ext
-
 from http import MessageStore, factory_decorator
-
+from mopidy import config, ext
 from alarm_manager import AlarmManager
 
 
