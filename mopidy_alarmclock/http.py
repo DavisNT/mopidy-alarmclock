@@ -1,19 +1,20 @@
 from __future__ import unicode_literals
+import datetime
+import os
+import re
+import tornado.template
+import tornado.web
 
-import tornado.web, tornado.template
-
-import logging, time, datetime, os, re
-
-#logging.getLogger(__name__)
 
 template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
 
 MESSAGES = {
-    'ok': (u'Alarm has been properly set.','success'),
-    'format': (u'The date\'s format you specified is incorrect.','danger'),
-    'cancel': (u'Alarm has been canceled.','success'),
+    'ok': (u'Alarm has been properly set.', 'success'),
+    'format': (u'The date\'s format you specified is incorrect.', 'danger'),
+    'cancel': (u'Alarm has been canceled.', 'success'),
 }
+
 
 class BaseRequestHandler(tornado.web.RequestHandler):
     def initialize(self, core, alarm_manager, msg_store):
@@ -24,6 +25,7 @@ class BaseRequestHandler(tornado.web.RequestHandler):
     def send_message(self, code):
         self.msg_store.msg_code = code
         self.redirect('/alarmclock/')
+
 
 class MainRequestHandler(BaseRequestHandler):
     def get(self):
@@ -39,6 +41,7 @@ class MainRequestHandler(BaseRequestHandler):
             alarm_manager=self.alarm_manager,
             message=message,
         ))
+
 
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
@@ -86,8 +89,8 @@ class MessageStore(object):
 # and pass the instance of mopidy.Core to the AlarmManager (via get_core)
 def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
-        #since all the RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager':alarm_manager.get_core(core), 'msg_store':msg_store})
+        # since all the RequestHandler-classes get the same arguments ...
+        bind = lambda url, klass : (url, klass, {'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),

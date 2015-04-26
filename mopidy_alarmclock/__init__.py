@@ -1,17 +1,15 @@
 from __future__ import unicode_literals
 
-import logging
 import os
 
 from mopidy import config, ext
 
-from http import factory_decorator, MessageStore
+from http import MessageStore, factory_decorator
+
 from alarm_manager import AlarmManager
 
 
 __version__ = '0.1.3'
-
-#logger = logging.getLogger(__name__)
 
 
 class Extension(ext.Extension):

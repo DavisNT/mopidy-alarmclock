@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import datetime
 from threading import Timer
 
+
 # Enum of states
 class states:
     DISABLED = 1
