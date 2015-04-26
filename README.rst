@@ -14,6 +14,10 @@ Mopidy-AlarmClock
     :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
     :alt: Travis-CI build status
 
+.. image:: https://coveralls.io/repos/DavisNT/mopidy-alarmclock/badge.svg
+    :target: https://coveralls.io/r/DavisNT/mopidy-alarmclock
+    :alt: Coveralls test coverage
+
 A Mopidy extension for using it as an alarm clock.
 
 Mopidy-AlarmClock was originally created by `Mathieu Xhonneux <https://github.com/Zashas>`_ and now is maintained by `Davis Mosenkovs <https://github.com/DavisNT>`_.
@@ -50,7 +54,7 @@ Changelog
 dev
 ----------------------------------------
 
-- Added Travis-CI build.
+- Added Travis-CI build and Coveralls test coverage info.
 - Fixed README (to be parsable by PyPI).
 
 v0.1.3
