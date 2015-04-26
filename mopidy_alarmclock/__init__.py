@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 
 import os
+
 from http import MessageStore, factory_decorator
-from mopidy import config, ext
 from alarm_manager import AlarmManager
+
+from mopidy import config, ext
 
 
 __version__ = '0.1.3'
