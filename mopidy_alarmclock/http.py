@@ -71,16 +71,19 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         else:
             self.send_message('format')
 
+
 class CancelAlarmRequestHandler(BaseRequestHandler):
     def get(self):
         self.alarm_manager.cancel()
         self.send_message('cancel')
 
-class MessageStore(object):
-    msg_code = None #Message to be stored
 
-#little hack to pass a persistent instance (alarm_manager) to the handler
-#and pass the instance of mopidy.Core to the AlarmManager (via get_core)
+class MessageStore(object):
+    msg_code = None  # Message to be stored
+
+
+# little hack to pass a persistent instance (alarm_manager) to the handler
+# and pass the instance of mopidy.Core to the AlarmManager (via get_core)
 def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         #since all the RequestHandler-classes get the same arguments ...
