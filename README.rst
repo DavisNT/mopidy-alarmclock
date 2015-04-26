@@ -10,6 +10,10 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Number of PyPI downloads
 
+.. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=master
+    :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
+    :alt: Travis-CI build status
+
 A Mopidy extension for using it as an alarm clock.
 
 Mopidy-AlarmClock was originally created by `Mathieu Xhonneux <https://github.com/Zashas>`_ and now is maintained by `Davis Mosenkovs <https://github.com/DavisNT>`_.
@@ -46,6 +50,7 @@ Changelog
 dev
 ----------------------------------------
 
+- Added Travis-CI build.
 - Fixed README (to be parsable by PyPI).
 
 v0.1.3
