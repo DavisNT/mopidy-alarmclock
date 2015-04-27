@@ -40,10 +40,10 @@ class MainRequestHandler(BaseRequestHandler):
         playlists = self.core.playlists.playlists.get()
 
         self.write(template_loader.load('index.html').generate(
-            playlists = playlists,
-            alarm_manager = self.alarm_manager,
-            message = message,
-            config = self.config['alarmclock']
+            playlists=playlists,
+            alarm_manager=self.alarm_manager,
+            message=message,
+            config=self.config['alarmclock']
         ))
 
 
