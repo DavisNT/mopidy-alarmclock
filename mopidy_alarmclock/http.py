@@ -19,7 +19,8 @@ MESSAGES = {
 
 
 class BaseRequestHandler(tornado.web.RequestHandler):
-    def initialize(self, core, alarm_manager, msg_store):
+    def initialize(self, config, core, alarm_manager, msg_store):
+        self.config = config
         self.core = core
         self.alarm_manager = alarm_manager
         self.msg_store = msg_store
@@ -39,9 +40,10 @@ class MainRequestHandler(BaseRequestHandler):
         playlists = self.core.playlists.playlists.get()
 
         self.write(template_loader.load('index.html').generate(
-            playlists=playlists,
-            alarm_manager=self.alarm_manager,
-            message=message,
+            playlists = playlists,
+            alarm_manager = self.alarm_manager,
+            message = message,
+            config = self.config['alarmclock']
         ))
 
 
@@ -92,7 +94,7 @@ class MessageStore(object):
 def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         # since all the RequestHandler-classes get the same arguments ...
-        bind = lambda url, klass: (url, klass, {'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
+        bind = lambda url, klass: (url, klass, {'config': config, 'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),

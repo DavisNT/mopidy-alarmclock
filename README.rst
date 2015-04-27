@@ -33,7 +33,24 @@ Install by running::
 Configuration
 =============
 
-This extension requires no configuration.
+Alarm defaults can be configured in ``mopidy.conf`` config file::
+
+    [alarmclock]
+    # Default alarm time in Hours:Minutes format
+    def_time = 8:00
+
+    # Name or Mopidy URI of default alarm playlist
+    def_playlist = 
+
+    # Default state of Random Track Order (true or false)
+    def_random = false
+
+    # Default alarm volume (integer, 1 to 100)
+    def_volume = 100
+
+    # Default seconds to full volume (integer, 0 to 300)
+    def_vol_inc_duration = 30
+
 
 Usage
 =============
@@ -54,7 +71,8 @@ Changelog
 dev
 ----------------------------------------
 
-- Added Travis-CI build and Coveralls test coverage info.
+- Alarm defaults can now be configured in ``mopidy.conf``.
+- Added `Travis-CI build <https://travis-ci.org/DavisNT/mopidy-alarmclock>`_ and `Coveralls test coverage info <https://coveralls.io/r/DavisNT/mopidy-alarmclock>`_.
 - Fixed README (to be parsable by PyPI).
 
 v0.1.3

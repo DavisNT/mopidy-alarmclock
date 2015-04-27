@@ -23,6 +23,11 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
+        schema['def_time'] = config.String()
+        schema['def_playlist'] = config.String(optional=True)
+        schema['def_random'] = config.Boolean()
+        schema['def_volume'] = config.Integer()
+        schema['def_vol_inc_duration'] = config.Integer()
         return schema
 
     def setup(self, registry):

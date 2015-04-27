@@ -41,7 +41,7 @@
             <div class="form-group clockpicker">
               <label class="col-md-4 control-label" for="time">Time</label>
               <div class="col-md-4">
-                <input type="text" name="time" class="form-control" value="08:00">
+                <input type="text" name="time" class="form-control" value="{{ config['def_time'] }}">
               </div>
             </div>
 
@@ -50,7 +50,7 @@
               <div class="col-md-4">
                 <select id="playlist" name="playlist" class="form-control">
                     {% for playlist in playlists %}
-                        <option value="{{ playlist.uri }}">{{ playlist.name }}</option>
+                        <option value="{{ playlist.uri }}"{% if config['def_playlist'] == playlist.uri or config['def_playlist'] == playlist.name %} selected="selected"{% end %}>{{ playlist.name }}</option>
                     {% end %}
                 </select>
               </div>
@@ -60,7 +60,7 @@
               <label class="col-md-4 control-label" for="checkboxes">Random Track Order</label>
               <div class="col-md-4">
                 <label class="checkbox-inline" for="checkboxes-0">
-                  <input name="random" id="checkboxes-0" value="1" type="checkbox">
+                  <input name="random" id="checkboxes-0" value="1" type="checkbox"{% if config['def_random'] %} checked="checked"{% end %}>
                 </label>
               </div>
             </div>
@@ -68,14 +68,14 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="volume">Alarm volume</label>
               <div class="col-md-4">
-                <input type="range" name="volume" class="form-control" min="1" max="100" value="100" title="100" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
+                <input type="range" name="volume" id="volume" class="form-control" min="1" max="100" value="{{ config['def_volume'] }}" title="{{ config['def_volume'] }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
               </div>
             </div>
 
             <div class="form-group">
               <label class="col-md-4 control-label" for="incsec">Seconds to full volume</label>
               <div class="col-md-4">
-                <input type="range" name="incsec" class="form-control" min="0" max="300" value="30" title="30" onchange="this.title=this.value;">
+                <input type="range" name="incsec" class="form-control" min="0" max="300" value="{{ config['def_vol_inc_duration'] }}" title="{{ config['def_vol_inc_duration'] }}" onchange="this.title=this.value;">
               </div>
             </div>
 
@@ -97,5 +97,6 @@
 {% block extra-js %}
 <script type="text/javascript">
 $('.clockpicker').clockpicker({'autoclose':true});
+$('#volume').change();
 </script>
 {% end %}
