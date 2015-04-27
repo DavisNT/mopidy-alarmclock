@@ -59,11 +59,11 @@ class SetAlarmRequestHandler(BaseRequestHandler):
 
         # Get and sanitize volume and seconds to full volume
         volume = int(self.get_argument('volume', 100))
-        volume_increase_seconds = int(self.get_argument('incsec', 0))
+        volume_increase_seconds = int(self.get_argument('incsec', 30))
         if volume < 1 or volume > 100:
             volume = 100
         if volume_increase_seconds < 0 or volume_increase_seconds > 300:
-            volume_increase_seconds = 0
+            volume_increase_seconds = 30
 
         if matched:
             time_comp = map(lambda x: int(x), matched.groups())
