@@ -30,6 +30,11 @@ class AlarmManager(object):
     def get_ring_time(self):
         return self.clock_datetime.strftime('%H:%M')
 
+    def get_seconds_since_midnight(self):
+        # snippet found here http://stackoverflow.com/a/15971505/927592
+        now = datetime.datetime.now()
+        return int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
+
     def reset(self):
         self.clock_datetime = None
         self.playlist = None
