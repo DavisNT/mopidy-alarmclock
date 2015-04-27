@@ -68,10 +68,12 @@ Project resources
 Changelog
 =========
 
-dev
+v0.1.4
 ----------------------------------------
 
 - Alarm defaults can now be configured in ``mopidy.conf``.
+- Display alarm volume on *Alarm state*.
+- Display current time of alarm clock on *Alarm state*.
 - Added `Travis-CI build <https://travis-ci.org/DavisNT/mopidy-alarmclock>`_ and `Coveralls test coverage info <https://coveralls.io/r/DavisNT/mopidy-alarmclock>`_.
 - Fixed README (to be parsable by PyPI).
 
