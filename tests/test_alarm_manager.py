@@ -55,7 +55,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Test when set
         self.assertTrue(am.is_set())
         self.assertTrue(am.random_mode)
-        self.assertEqual(am.volume, 97)
+        self.assertEqual(am.volume, 3)
         self.assertEqual(am.volume_increase_seconds, 17)
 
         # Tests a few seconds BEFORE alarm
