@@ -35,7 +35,7 @@ class ExtensionTest(unittest.TestCase):
         self.assertIn('def_volume', schema)
         self.assertIn('def_vol_inc_duration', schema)
 
-    def test_setup():
+    def test_setup(self):
         registry = mock.Mock()
 
         ext = Extension()
