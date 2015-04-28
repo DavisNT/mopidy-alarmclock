@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import time
 import unittest
+
 import mock
 
 from mopidy_alarmclock.alarm_manager import AlarmManager
@@ -35,7 +36,7 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Test when set
         self.assertTrue(am.is_set())
-        self.assertEqual(am.get_ring_time(), "7:59")
+        self.assertEqual(am.get_ring_time(), b'7:59')
         self.assertFalse(am.random_mode)
         self.assertEqual(am.volume, 41)
         self.assertEqual(am.volume_increase_seconds, 83)
