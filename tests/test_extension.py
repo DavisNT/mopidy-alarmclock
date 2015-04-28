@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import unittest
+
 import mock
 
 from mopidy_alarmclock import Extension
