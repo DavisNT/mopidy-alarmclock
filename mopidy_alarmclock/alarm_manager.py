@@ -94,5 +94,5 @@ class AlarmManager(object):
                 self.core.playback.volume = target_volume
             else:
                 self.core.playback.volume = int(round(target_volume * float(step_no + 1) / (number_of_steps + 1)))
-                t = Timer(increase_duration / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
+                t = Timer(float(increase_duration) / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
                 t.start()
