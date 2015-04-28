@@ -72,7 +72,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.play.call_count, 0)
 
         # Tests a few seconds AFTER alarm START
-        time.sleep(10)
+        time.sleep(8)
         self.assertFalse(am.is_set())
         self.assertEqual(core.tracklist.repeat, True)
         self.assertEqual(core.tracklist.random, True)
