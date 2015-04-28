@@ -100,12 +100,15 @@
 {% if alarm_manager.is_set() %}
 var secondsSinceMidnight = {{ alarm_manager.get_seconds_since_midnight() }};
 function updateClock() {
-    var h = Math.floor(secondsSinceMidnight / 3600);
+    var hh = Math.floor(secondsSinceMidnight / 3600);
     var mm = Math.floor(secondsSinceMidnight % 3600 / 60);
+    if(hh < 10) {
+        hh = "0" + hh;
+    }
     if(mm < 10) {
         mm = "0" + mm;
     }
-    $("#clock").html("Current time of alarm clock is " + h + ":" + mm + ".");
+    $("#clock").html("Current time of alarm clock is " + hh + ":" + mm + ".");
     secondsSinceMidnight = (secondsSinceMidnight + 1) % 86400;
 }
 updateClock();
