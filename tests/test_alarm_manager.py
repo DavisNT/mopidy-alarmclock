@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 import unittest
 
-import mock
+# import mock
 
-from alarm_manager import AlarmManager
+from mopidy_alarmclock.alarm_manager import AlarmManager
 
 
 class AlarmManagerTest(unittest.TestCase):
@@ -13,6 +13,6 @@ class AlarmManagerTest(unittest.TestCase):
         am = AlarmManager()
 
         seconds = am.get_seconds_since_midnight()
-        
+
         self.assertIsInstance(seconds, int)
         self.assertTrue(seconds >= 0 and seconds < 86400)
