@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from __future__ import division
 
 import datetime
 from threading import Timer
@@ -93,6 +94,6 @@ class AlarmManager(object):
             if step_no >= number_of_steps:  # this design should prevent floating-point edge-case bugs (in case such bugs could be possible here)
                 self.core.playback.volume = target_volume
             else:
-                self.core.playback.volume = int(round(target_volume * float(step_no + 1) / (number_of_steps + 1)))
-                t = Timer(float(increase_duration) / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
+                self.core.playback.volume = int(round(target_volume * (step_no + 1) / (number_of_steps + 1)))
+                t = Timer(increase_duration / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
                 t.start()
