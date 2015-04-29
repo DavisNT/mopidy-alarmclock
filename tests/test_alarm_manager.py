@@ -22,6 +22,7 @@ class AlarmManagerTest(unittest.TestCase):
     def integration_test_1(self):
         core = mock.Mock()
         playlist = mock.Mock()
+        playlist.tracks = 'Tracks 811, 821, 823, 827, 829, 839'
 
         am = AlarmManager()
 
@@ -48,6 +49,27 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Test is_set() when NOT set
         self.assertFalse(am.is_set())
+
+        # Set alarm to NEAR future
+        am.set_alarm(datetime.datetime.now() + datetime.timedelta(seconds=29), playlist, False, 23, 127)
+
+        # Tests a few seconds BEFORE alarm
+        time.sleep(27)
+        self.assertTrue(am.is_set())
+        self.assertFalse(am.random_mode)
+        self.assertEqual(am.volume, 23)
+        self.assertEqual(am.volume_increase_seconds, 127)
+
+        # Cancel alarm
+        am.cancel()
+        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
+        # TODO Fix this issue in the code
+
+        # Test is_set() when NOT set
+        self.assertFalse(am.is_set())
+
+        # Sleep 20 seconds more to ensure that alarm will start if not cancelled
+        time.sleep(20)
 
         # Set alarm to NEAR future
         am.set_alarm(datetime.datetime.now() + datetime.timedelta(seconds=31), playlist, True, 3, 17)
@@ -81,6 +103,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.stop.call_count, 1)
         self.assertEqual(core.tracklist.clear.call_count, 1)
         self.assertEqual(core.tracklist.add.call_count, 1)
+        core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
         self.assertEqual(core.playback.next.call_count, 1)
         self.assertEqual(core.playback.play.call_count, 1)
 
