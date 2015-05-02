@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import threading
 import datetime
 import time
 import unittest
@@ -11,14 +12,14 @@ from mopidy_alarmclock.alarm_manager import AlarmManager
 
 class AlarmManagerTest(unittest.TestCase):
 
-    def test_get_core(self):
+    def test01_get_core(self):
         core = 'This core should crash on play'
 
         am = AlarmManager()
 
         self.assertTrue(am is am.get_core(core))
 
-    def test_get_seconds_since_midnight(self):
+    def test01_get_seconds_since_midnight(self):
         am = AlarmManager()
 
         seconds = am.get_seconds_since_midnight()
@@ -26,7 +27,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertIsInstance(seconds, int)
         self.assertTrue(seconds >= 0 and seconds < 86400)
 
-    def test_is_set(self):
+    def test02_is_set(self):
         playlist = 'This playlist should crash on play'
 
         am = AlarmManager()
@@ -41,7 +42,26 @@ class AlarmManagerTest(unittest.TestCase):
 
         self.assertFalse(am.is_set())
 
-    def test_get_ring_time(self):
+    def test02_set_alarm_thread(self):
+        playlist = 'This playlist should crash on play'
+        threadcount =  threading.active_count()
+
+        am = AlarmManager()
+
+        self.assertEqual(threading.active_count(), threadcount)
+
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        self.assertEqual(threading.active_count(), threadcount + 1)
+
+        am.cancel()
+
+        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
+        # TODO Fix this issue in the code
+
+        self.assertEqual(threading.active_count(), threadcount)
+
+    def test02_get_ring_time(self):
         playlist = 'This playlist should crash on play'
 
         am = AlarmManager()
@@ -52,7 +72,7 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
-    def test_adjust_volume_100_1(self):
+    def test03_adjust_volume_100_1(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -66,7 +86,7 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
 
-    def test_adjust_volume_100_0(self):
+    def test03_adjust_volume_100_0(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -78,7 +98,7 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
 
-    def test_adjust_volume_3_17(self):
+    def test03_adjust_volume_3_17(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -96,7 +116,7 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(20)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 3)
 
-    def test_adjust_volume_80_10(self):
+    def test03_adjust_volume_80_10(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -129,7 +149,7 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 80)
 
-    def test_adjust_volume_100_30(self):
+    def test03_adjust_volume_100_30(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -201,7 +221,7 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
 
-    def test_adjust_volume_100_30_intervened(self):
+    def test03_adjust_volume_100_30_intervened(self):
         core = mock.Mock()
 
         am = AlarmManager()
@@ -234,24 +254,27 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 14)
 
-    def integration_test_1(self):
+    def test04_integration_1(self):
         core = mock.Mock()
         playlist = mock.Mock()
         playlist.tracks = 'Tracks 811, 821, 823, 827, 829, 839'
+        threadcount =  threading.active_count()
 
         am = AlarmManager()
 
         # Test get_core()
         self.assertTrue(am is am.get_core(core))
 
-        # Test is_set() when NOT set
+        # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount)
 
         # Set alarm to FAR future
         am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
 
         # Test when set
         self.assertTrue(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)
         self.assertEqual(am.get_ring_time(), b'07:59')
         self.assertFalse(am.random_mode)
         self.assertEqual(am.volume, 41)
@@ -262,8 +285,9 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
         # TODO Fix this issue in the code
 
-        # Test is_set() when NOT set
+        # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount)
 
         # Set alarm to NEAR future
         am.set_alarm(datetime.datetime.now() + datetime.timedelta(seconds=29), playlist, False, 23, 127)
@@ -271,6 +295,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Tests a few seconds BEFORE alarm
         time.sleep(27)
         self.assertTrue(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)
         self.assertFalse(am.random_mode)
         self.assertEqual(am.volume, 23)
         self.assertEqual(am.volume_increase_seconds, 127)
@@ -280,8 +305,9 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
         # TODO Fix this issue in the code
 
-        # Test is_set() when NOT set
+        # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount)
 
         # Sleep 20 seconds more to ensure that alarm will start if not cancelled
         time.sleep(20)
@@ -291,6 +317,7 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Test when set
         self.assertTrue(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)
         self.assertTrue(am.random_mode)
         self.assertEqual(am.volume, 3)
         self.assertEqual(am.volume_increase_seconds, 17)
@@ -298,6 +325,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Tests a few seconds BEFORE alarm
         time.sleep(29)
         self.assertTrue(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)
         self.assertIsInstance(core.tracklist.repeat, mock.Mock)
         self.assertIsInstance(core.tracklist.random, mock.Mock)
         self.assertIsInstance(core.playback.mute, mock.Mock)
@@ -311,6 +339,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Tests a few seconds AFTER alarm START
         time.sleep(8)
         self.assertFalse(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)  # Additional thread is created by adjust_volume()
         self.assertEqual(core.tracklist.repeat, True)
         self.assertEqual(core.tracklist.random, True)
         self.assertEqual(core.playback.mute, False)
@@ -329,7 +358,9 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.volume, 2)
         time.sleep(5.67)
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount)
         time.sleep(20)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount)
 
     # TODO Write more (granular + comprehensive) tests
