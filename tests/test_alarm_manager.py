@@ -77,17 +77,23 @@ class AlarmManagerTest(unittest.TestCase):
 
     def test03_adjust_volume_100_1(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
 
+        self.assertEqual(threading.active_count(), threadcount)
+
         am.adjust_volume(100, 1, 0)
 
         self.assertEqual(core.playback.volume, 50)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_100_0(self):
         core = mock.Mock()
