@@ -33,7 +33,7 @@ Install by running::
 Configuration
 =============
 
-Alarm defaults can be configured in ``mopidy.conf`` config file::
+Optionally alarm defaults can be configured in ``mopidy.conf`` config file (the default default values are shown below)::
 
     [alarmclock]
     # Default alarm time in Hours:Minutes format
