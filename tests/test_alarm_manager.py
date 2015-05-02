@@ -91,52 +91,73 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 100)
         self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
         self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_100_0(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
+
+        self.assertEqual(threading.active_count(), threadcount)
 
         am.adjust_volume(100, 0, 0)
 
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_3_17(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
 
+        self.assertEqual(threading.active_count(), threadcount)
+
         am.adjust_volume(3, 17, 0)
 
         self.assertEqual(core.playback.volume, 1)
+        self.assertEqual(threading.active_count(), threadcount + 1)
+        time.sleep(5.87)  # First step has additional 0.2 seconds to prevent race conditions
+        self.assertEqual(core.playback.volume, 2)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(5.67)
         self.assertEqual(core.playback.volume, 2)
-        time.sleep(5.67)
-        self.assertEqual(core.playback.volume, 2)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(5.67)
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(20)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_80_10(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
         core.playback.volume = 14  # Set volume before test to 14 (Mopidy 0.x API on query)
 
+        self.assertEqual(threading.active_count(), threadcount)
+
         am.adjust_volume(80, 10, 0)
 
         self.assertEqual(core.playback.volume, 7)
-        time.sleep(1)
+        self.assertEqual(threading.active_count(), threadcount + 1)
+        time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 15)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 22)
         time.sleep(1)
@@ -153,22 +174,31 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.volume, 65)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 73)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 80)
+        self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 80)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_100_30(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
 
+        self.assertEqual(threading.active_count(), threadcount)
+
         am.adjust_volume(100, 30, 0)
 
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 6)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 10)
         time.sleep(1)
@@ -225,22 +255,31 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.volume, 94)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 97)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 100)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test03_adjust_volume_100_30_intervened(self):
         core = mock.Mock()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
         am.get_core(core)
 
+        self.assertEqual(threading.active_count(), threadcount)
+
         am.adjust_volume(100, 30, 0)
 
         self.assertEqual(core.playback.volume, 3)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 6)
+        self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 10)
         time.sleep(1)
@@ -259,9 +298,18 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.volume, 32)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 35)
+        self.assertEqual(threading.active_count(), threadcount + 1)
+
         core.playback.volume = 14  # Intervention: set volume to 14 (Mopidy 0.x API on query)
+        self.assertEqual(threading.active_count(), threadcount + 1)
+
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 14)
+        self.assertEqual(threading.active_count(), threadcount)
+
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 14)
+        self.assertEqual(threading.active_count(), threadcount)
 
     def test04__integration_1(self):
         core = mock.Mock()
@@ -361,7 +409,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.play.call_count, 1)
 
         # Further tests of gradual volume increasing
-        time.sleep(5.67)
+        time.sleep(5.87)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 2)
         time.sleep(5.67)
         self.assertEqual(core.playback.volume, 2)
