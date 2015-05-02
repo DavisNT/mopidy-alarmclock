@@ -409,7 +409,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.play.call_count, 1)
 
         # Further tests of gradual volume increasing
-        time.sleep(5.87)  # First step has additional 0.2 seconds to prevent race conditions
+        time.sleep(5.67)  # Race conditions already prevented by previous sleep()
         self.assertEqual(core.playback.volume, 2)
         self.assertEqual(threading.active_count(), threadcount + 1)
         time.sleep(5.67)
