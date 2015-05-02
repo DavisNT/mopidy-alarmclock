@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-import threading
 import datetime
+import threading
 import time
 import unittest
 
@@ -40,11 +40,14 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
+        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
+        # TODO Fix this issue in the code
+
         self.assertFalse(am.is_set())
 
-    def test02_set_alarm_thread(self):
+    def test02_set_alarm__threading(self):
         playlist = 'This playlist should crash on play'
-        threadcount =  threading.active_count()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
 
@@ -254,11 +257,11 @@ class AlarmManagerTest(unittest.TestCase):
         time.sleep(5)  # More than 3x increase step time
         self.assertEqual(core.playback.volume, 14)
 
-    def test04_integration_1(self):
+    def test04__integration_1(self):
         core = mock.Mock()
         playlist = mock.Mock()
         playlist.tracks = 'Tracks 811, 821, 823, 827, 829, 839'
-        threadcount =  threading.active_count()
+        threadcount = threading.active_count()
 
         am = AlarmManager()
 
