@@ -11,6 +11,13 @@ from mopidy_alarmclock.alarm_manager import AlarmManager
 
 class AlarmManagerTest(unittest.TestCase):
 
+    def test_get_core(self):
+        core = 'This core should crash on play'
+
+        am = AlarmManager()
+
+        self.assertTrue(am is am.get_core(core))
+
     def test_get_seconds_since_midnight(self):
         am = AlarmManager()
 
@@ -18,6 +25,214 @@ class AlarmManagerTest(unittest.TestCase):
 
         self.assertIsInstance(seconds, int)
         self.assertTrue(seconds >= 0 and seconds < 86400)
+
+    def test_is_set(self):
+        playlist = 'This playlist should crash on play'
+
+        am = AlarmManager()
+
+        self.assertFalse(am.is_set())
+
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        self.assertTrue(am.is_set())
+
+        am.cancel()
+
+        self.assertFalse(am.is_set())
+
+    def test_get_ring_time(self):
+        playlist = 'This playlist should crash on play'
+
+        am = AlarmManager()
+
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        self.assertEqual(am.get_ring_time(), b'07:59')
+
+        am.cancel()
+
+    def test_adjust_volume_100_1(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        am.adjust_volume(100, 1, 0)
+
+        self.assertEqual(core.playback.volume, 50)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 100)
+        time.sleep(5)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 100)
+
+    def test_adjust_volume_100_0(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        am.adjust_volume(100, 0, 0)
+
+        self.assertEqual(core.playback.volume, 100)
+        time.sleep(5)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 100)
+
+    def test_adjust_volume_3_17(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        am.adjust_volume(3, 17, 0)
+
+        self.assertEqual(core.playback.volume, 1)
+        time.sleep(5.67)
+        self.assertEqual(core.playback.volume, 2)
+        time.sleep(5.67)
+        self.assertEqual(core.playback.volume, 2)
+        time.sleep(5.67)
+        self.assertEqual(core.playback.volume, 3)
+        time.sleep(20)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 3)
+
+    def test_adjust_volume_80_10(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+        core.playback.volume = 14  # Set volume before test to 14 (Mopidy 0.x API on query)
+
+        am.adjust_volume(80, 10, 0)
+
+        self.assertEqual(core.playback.volume, 7)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 15)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 22)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 29)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 36)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 44)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 51)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 58)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 65)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 73)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 80)
+        time.sleep(5)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 80)
+
+    def test_adjust_volume_100_30(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        am.adjust_volume(100, 30, 0)
+
+        self.assertEqual(core.playback.volume, 3)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 6)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 10)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 13)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 16)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 19)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 23)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 26)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 29)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 32)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 35)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 39)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 42)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 45)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 48)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 52)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 55)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 58)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 61)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 65)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 68)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 71)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 74)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 77)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 81)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 84)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 87)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 90)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 94)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 97)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 100)
+        time.sleep(5)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 100)
+
+    def test_adjust_volume_100_30_intervened(self):
+        core = mock.Mock()
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        am.adjust_volume(100, 30, 0)
+
+        self.assertEqual(core.playback.volume, 3)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 6)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 10)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 13)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 16)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 19)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 23)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 26)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 29)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 32)
+        time.sleep(1)
+        self.assertEqual(core.playback.volume, 35)
+        core.playback.volume = 14  # Intervention: set volume to 14 (Mopidy 0.x API on query)
+        time.sleep(5)  # More than 3x increase step time
+        self.assertEqual(core.playback.volume, 14)
 
     def integration_test_1(self):
         core = mock.Mock()
