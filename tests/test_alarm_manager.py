@@ -88,7 +88,7 @@ class AlarmManagerTest(unittest.TestCase):
 
         self.assertEqual(core.playback.volume, 50)
         self.assertEqual(threading.active_count(), threadcount + 1)
-        time.sleep(1)
+        time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 100)
         self.assertEqual(threading.active_count(), threadcount)
         time.sleep(5)  # More than 3x increase step time
@@ -167,7 +167,7 @@ class AlarmManagerTest(unittest.TestCase):
         am.adjust_volume(100, 30, 0)
 
         self.assertEqual(core.playback.volume, 3)
-        time.sleep(1)
+        time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 6)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 10)
@@ -239,7 +239,7 @@ class AlarmManagerTest(unittest.TestCase):
         am.adjust_volume(100, 30, 0)
 
         self.assertEqual(core.playback.volume, 3)
-        time.sleep(1)
+        time.sleep(1.2)  # First step has additional 0.2 seconds to prevent race conditions
         self.assertEqual(core.playback.volume, 6)
         time.sleep(1)
         self.assertEqual(core.playback.volume, 10)
