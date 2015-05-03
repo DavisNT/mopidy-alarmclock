@@ -47,7 +47,7 @@ class AlarmManager(object):
     def cancel(self):
         self.reset()
         self.state = states.CANCELED
-        if isinstance(self.idle_timer, Timer):
+        if self.idle_timer is not None:
             self.idle_timer.cancel()
 
     def set_alarm(self, clock_datetime, playlist, random_mode, volume, volume_increase_seconds):
@@ -58,7 +58,7 @@ class AlarmManager(object):
         self.volume_increase_seconds = volume_increase_seconds
         self.state = states.WAITING
 
-        if isinstance(self.idle_timer, Timer):
+        if self.idle_timer is not None:
             self.idle_timer.cancel()
 
         self.idle()
