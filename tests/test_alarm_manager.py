@@ -40,6 +40,8 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
         self.assertFalse(am.is_set())
 
     def test02_set_alarm__threading(self):
