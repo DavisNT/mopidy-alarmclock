@@ -9,14 +9,17 @@ from mopidy_alarmclock import http
 
 class HttpTest(unittest.TestCase):
 
-    @mock.patch('mopidy_alarmclock.http.tornado')
-    def test_SetAlarmRequestHandler(self, x):
+    def test_SetAlarmRequestHandler(self):
         config = mock.Mock()
         core = mock.Mock()
         alarm_manager = mock.Mock()
         msg_store = mock.Mock()
 
-        handler = http.SetAlarmRequestHandler()
+        patcher = mock.patch.object(http.SetAlarmRequestHandler, '__bases__', (mock.Mock,))
+        with patcher:
+            with patcher:
+            handler = http.SetAlarmRequestHandler()
+
         handler.initialize(config, core, alarm_manager, msg_store)
         handler.get_argument = mock.Mock()
         handler.get_argument.side_effect = lambda v: {'playlist': 'Playlist URI', 'time': '8:00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
