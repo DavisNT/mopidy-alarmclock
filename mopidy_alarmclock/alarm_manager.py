@@ -20,6 +20,7 @@ class AlarmManager(object):
     volume_increase_seconds = None  # Seconds to full volume
     core = None
     state = states.DISABLED
+    idle_timer = None
 
     def get_core(self, core):
         self.core = core
@@ -46,6 +47,8 @@ class AlarmManager(object):
     def cancel(self):
         self.reset()
         self.state = states.CANCELED
+        if isinstance(self.idle_timer, Timer):
+            self.idle_timer.cancel()
 
     def set_alarm(self, clock_datetime, playlist, random_mode, volume, volume_increase_seconds):
         self.clock_datetime = clock_datetime
@@ -54,6 +57,9 @@ class AlarmManager(object):
         self.volume = volume
         self.volume_increase_seconds = volume_increase_seconds
         self.state = states.WAITING
+
+        if isinstance(self.idle_timer, Timer):
+            self.idle_timer.cancel()
 
         self.idle()
 
@@ -84,6 +90,7 @@ class AlarmManager(object):
             else:
                 t = Timer(5, self.idle)  # check each 5 seconds if the alarm must start or not
                 t.start()
+                self.idle_timer = t  # Atomically set idle_timer to next timer
 
     def adjust_volume(self, target_volume, increase_duration, step_no):
         number_of_steps = min(target_volume, increase_duration)
