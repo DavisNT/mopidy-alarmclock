@@ -68,6 +68,13 @@ Project resources
 Changelog
 =========
 
+dev
+----------------------------------------
+
+- Added tests.
+- Fixed nondeterministic effects when cancelling and setting alarm again within 5 seconds (prevent stale ``idle()`` timers).
+- Fixed minor math bug in gradual volume increasing.
+
 v0.1.4
 ----------------------------------------
 
