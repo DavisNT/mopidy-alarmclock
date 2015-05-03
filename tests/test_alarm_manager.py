@@ -502,4 +502,24 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
 
+        # Set alarm to FAR future
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        # Test when set
+        self.assertTrue(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount + 1)
+        self.assertEqual(am.get_ring_time(), b'07:59')
+        self.assertFalse(am.random_mode)
+        self.assertEqual(am.volume, 41)
+        self.assertEqual(am.volume_increase_seconds, 83)
+
+        # Cancel alarm
+        am.cancel()
+        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
+        # TODO Fix this issue in the code
+
+        # Test is_set() and threading when NOT set
+        self.assertFalse(am.is_set())
+        self.assertEqual(threading.active_count(), threadcount)
+
     # TODO Write more (granular + comprehensive) tests
