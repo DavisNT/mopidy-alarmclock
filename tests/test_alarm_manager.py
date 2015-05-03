@@ -40,9 +40,6 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
-
         self.assertFalse(am.is_set())
 
     def test02_set_alarm__threading(self):
@@ -59,24 +56,15 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
-
         self.assertEqual(threading.active_count(), threadcount)
 
         # Set alarm twice
         am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
         am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
 
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
-
         self.assertEqual(threading.active_count(), threadcount + 1)
 
         am.cancel()
-
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
 
         self.assertEqual(threading.active_count(), threadcount)
 
@@ -117,9 +105,6 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
-
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
 
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
@@ -413,8 +398,6 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
 
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
@@ -433,8 +416,6 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
 
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
@@ -515,8 +496,6 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
-        time.sleep(7)  # Sleep a little longer than timer-resolution (to prevent several simultaneous timers)
-        # TODO Fix this issue in the code
 
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
