@@ -9,7 +9,7 @@ from mopidy_alarmclock import http
 
 class HttpTest(unittest.TestCase):
 
-    @mock.patch('http.tornado')
+    @mock.patch('mopidy_alarmclock.http.tornado')
     def test_SetAlarmRequestHandler(self):
         config = mock.Mock()
         core = mock.Mock()
