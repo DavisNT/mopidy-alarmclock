@@ -76,6 +76,40 @@ class AlarmManagerTest(unittest.TestCase):
 
         self.assertEqual(threading.active_count(), threadcount)
 
+        # Set alarm 3 times
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        time.sleep(8)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
+        self.assertEqual(threading.active_count(), threadcount + 1)
+
+        am.cancel()
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
+        self.assertEqual(threading.active_count(), threadcount)
+
+        # Set alarm 5 times
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        time.sleep(8)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+        am.set_alarm(datetime.datetime(2055, 4, 28, 7, 59, 15, 324341), playlist, False, 41, 83)
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
+        self.assertEqual(threading.active_count(), threadcount + 1)
+
+        am.cancel()
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
+        self.assertEqual(threading.active_count(), threadcount)
+
     def test02_get_ring_time(self):
         playlist = 'This playlist should crash on play'
 
