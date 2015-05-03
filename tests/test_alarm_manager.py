@@ -87,6 +87,8 @@ class AlarmManagerTest(unittest.TestCase):
 
         am.cancel()
 
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
     def test03_cancel(self):
         core = mock.Mock()
         playlist = mock.Mock()
@@ -102,6 +104,8 @@ class AlarmManagerTest(unittest.TestCase):
         # Cancel when alarm is NOT set
         am.cancel()
 
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
 
@@ -114,11 +118,15 @@ class AlarmManagerTest(unittest.TestCase):
         # Cancel alarm
         am.cancel()
 
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
 
         # Cancel when alarm is already cancelled
         am.cancel()
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
 
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
@@ -407,6 +415,8 @@ class AlarmManagerTest(unittest.TestCase):
         # Cancel alarm
         am.cancel()
 
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
+
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
         self.assertEqual(threading.active_count(), threadcount)
@@ -424,6 +434,8 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
 
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
@@ -504,6 +516,8 @@ class AlarmManagerTest(unittest.TestCase):
 
         # Cancel alarm
         am.cancel()
+
+        time.sleep(0.1)  # Wait 0.1 seconds for thread(s) to exit
 
         # Test is_set() and threading when NOT set
         self.assertFalse(am.is_set())
