@@ -17,7 +17,7 @@ class HttpTest(unittest.TestCase):
 
         patcher = mock.patch.object(http.SetAlarmRequestHandler, '__bases__', (mock.Mock,))
         with patcher:
-            with patcher:
+            patcher.is_local = True
             handler = http.SetAlarmRequestHandler()
 
         handler.initialize(config, core, alarm_manager, msg_store)
