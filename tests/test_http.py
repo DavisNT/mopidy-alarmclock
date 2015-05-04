@@ -4,11 +4,14 @@ import unittest
 
 import mock
 
+from freezegun import freeze_time
+
 from mopidy_alarmclock import http
 
 
 class HttpTest(unittest.TestCase):
 
+    @freeze_time("2015-05-03 07:17:53")
     def test_SetAlarmRequestHandler(self):
         config = mock.Mock()
         core = mock.Mock()
