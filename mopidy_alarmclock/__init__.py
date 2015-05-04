@@ -9,7 +9,7 @@ from alarm_manager import AlarmManager
 from mopidy import config, ext
 
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 class Extension(ext.Extension):

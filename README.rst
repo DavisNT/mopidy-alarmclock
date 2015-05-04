@@ -68,7 +68,7 @@ Project resources
 Changelog
 =========
 
-dev
+v0.1.5
 ----------------------------------------
 
 - Added tests.
