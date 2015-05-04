@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import datetime
+import time
 from threading import Timer
 
 
@@ -48,7 +49,13 @@ class AlarmManager(object):
         self.reset()
         self.state = states.CANCELED
         if self.idle_timer is not None:
-            self.idle_timer.cancel()
+            while True:
+                t = self.idle_timer
+                t.cancel()
+                if not t.is_alive():
+                    if t is self.idle_timer:  # Ensure that no new timer has been created
+                        break
+                time.sleep(0.05)
 
     def set_alarm(self, clock_datetime, playlist, random_mode, volume, volume_increase_seconds):
         self.clock_datetime = clock_datetime
@@ -59,7 +66,13 @@ class AlarmManager(object):
         self.state = states.WAITING
 
         if self.idle_timer is not None:
-            self.idle_timer.cancel()
+            while True:
+                t = self.idle_timer
+                t.cancel()
+                if not t.is_alive():
+                    if t is self.idle_timer:  # Ensure that no new timer has been created
+                        break
+                time.sleep(0.05)
 
         self.idle()
 
@@ -90,7 +103,7 @@ class AlarmManager(object):
             else:
                 t = Timer(5, self.idle)  # check each 5 seconds if the alarm must start or not
                 t.start()
-                self.idle_timer = t  # Atomically set idle_timer to next timer
+                self.idle_timer = t  # Atomically set idle_timer to next (alive) timer
 
     def adjust_volume(self, target_volume, increase_duration, step_no):
         number_of_steps = min(target_volume, increase_duration)
