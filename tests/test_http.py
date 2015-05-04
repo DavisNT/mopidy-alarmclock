@@ -17,7 +17,7 @@ class HttpTest(unittest.TestCase):
         config = mock.Mock()
         core = mock.Mock()
         alarm_manager = mock.Mock()
-        msg_store = mock.Mock()
+        msg_store = http.MessageStore()
 
         patcher = mock.patch.object(http.SetAlarmRequestHandler, '__bases__', (mock.Mock,))
         with patcher:
@@ -31,8 +31,27 @@ class HttpTest(unittest.TestCase):
 
         handler.post()
 
-        self.assertEqual(alarm_manager.set_alarm.call_count, 1)
         alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 8, 0), core.playlists.lookup('Playlist URI').get(), True, 81, 23)
+        self.assertEqual(msg_store.msg_code, 'ok')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+    def test_CancelAlarmRequestHandler(self):
+        alarm_manager = mock.Mock()
+        msg_store = http.MessageStore()
+
+        patcher = mock.patch.object(http.CancelAlarmRequestHandler, '__bases__', (mock.Mock,))
+        with patcher:
+            patcher.is_local = True
+            handler = http.CancelAlarmRequestHandler()
+
+        handler.initialize(None, None, alarm_manager, msg_store)
+        handler.redirect = mock.Mock()
+
+        handler.get()
+
+        alarm_manager.cancel.assert_called_once_with()
+        self.assertEqual(msg_store.msg_code, 'cancel')
+        handler.redirect.assert_called_once_with('/alarmclock/')
 
     # TODO Use Tornado unit testing
     # TODO Write more (granular + comprehensive) tests
