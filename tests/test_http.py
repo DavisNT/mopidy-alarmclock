@@ -221,11 +221,10 @@ class HttpTest(unittest.TestCase):
         # Test 14 - missing time
         handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': d, 'random': '1', 'volume': '81', 'incsec': '23'}[v]
 
-        handler.post()
+        with self.assertRaises(TypeError):
+            handler.post()
 
         self.assertFalse(alarm_manager.set_alarm.called)
-        self.assertEqual(msg_store.msg_code, 'format')
-        handler.redirect.assert_called_once_with('/alarmclock/')
 
     def test_CancelAlarmRequestHandler(self):
         alarm_manager = mock.Mock()
