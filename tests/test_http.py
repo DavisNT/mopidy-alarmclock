@@ -65,7 +65,7 @@ class HttpTest(unittest.TestCase):
 
         # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
         # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
-        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py and HTML form of index.html
+        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py AND HTML form of index.html
         alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 23, 59), core.playlists.lookup('Playlist URI').get(), True, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
@@ -82,9 +82,149 @@ class HttpTest(unittest.TestCase):
 
         # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
         # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
-        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py and HTML form of index.html
+        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py AND HTML form of index.html
         alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 0, 0), core.playlists.lookup('Playlist URI').get(), True, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 5 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': 'a8:00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 6 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8:00a', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 7 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8:0a0', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 8 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '800', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 9 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8_00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 10 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 11 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': 'a', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 12 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '24:00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 13 - invalid time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8:60', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 14 - missing time
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': d, 'random': '1', 'volume': '81', 'incsec': '23'}[v]
+
+        handler.post()
+
+        self.assertFalse(alarm_manager.set_alarm.called)
+        self.assertEqual(msg_store.msg_code, 'format')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
     def test_CancelAlarmRequestHandler(self):
