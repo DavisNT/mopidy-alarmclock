@@ -53,8 +53,8 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         playlist = self.core.playlists.lookup(playlist).get()
 
         time_string = self.get_argument('time', None)
-        # RE found here http://stackoverflow.com/questions/7536755/regular-expression-for-matching-hhmm-time-format
-        matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time_string)
+        # Based on RE found here http://stackoverflow.com/a/7536768/927592
+        matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5]?[0-9])$', time_string)
         random_mode = bool(self.get_argument('random', False))
 
         # Get and sanitize volume and seconds to full volume
