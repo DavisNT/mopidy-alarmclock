@@ -18,6 +18,7 @@ class ExtensionTest(unittest.TestCase):
         self.assertIn('enabled = true', config)
 
         # WARNING! Default configuration must be also updated in README.rst and ext.conf
+        # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
         self.assertIn('def_time = 8:00', config)
         self.assertIn('def_playlist = ', config)
         self.assertIn('def_random = false', config)

@@ -42,12 +42,48 @@ class HttpTest(unittest.TestCase):
         handler.redirect.reset_mock()
         msg_store.msg_code = None
 
-        # Test 2
+        # Test 2 - defaults, time format
         handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '05:7', 'random': d, 'volume': d, 'incsec': d}[v]
 
         handler.post()
 
+        # WARNING! Default configuration must be also updated in README.rst and ext.conf
+        # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
         alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 5, 7), core.playlists.lookup('Playlist URI').get(), False, 100, 30)
+        self.assertEqual(msg_store.msg_code, 'ok')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 3 - ranges, time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '23:59', 'random': '1', 'volume': '0', 'incsec': '-1'}[v]
+
+        handler.post()
+
+        # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
+        # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
+        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py and HTML form of index.html
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 23, 59), core.playlists.lookup('Playlist URI').get(), True, 100, 30)
+        self.assertEqual(msg_store.msg_code, 'ok')
+        handler.redirect.assert_called_once_with('/alarmclock/')
+
+        # Cleanup
+        alarm_manager.reset_mock()
+        handler.redirect.reset_mock()
+        msg_store.msg_code = None
+
+        # Test 4 - ranges, time format
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '0:0', 'random': '1', 'volume': '101', 'incsec': '301'}[v]
+
+        handler.post()
+
+        # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
+        # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
+        # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py and HTML form of index.html
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 0, 0), core.playlists.lookup('Playlist URI').get(), True, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
