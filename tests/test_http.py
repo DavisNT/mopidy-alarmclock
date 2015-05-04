@@ -43,11 +43,11 @@ class HttpTest(unittest.TestCase):
         msg_store.msg_code = None
 
         # Test 2
-        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '05:1', 'random': d, 'volume': d, 'incsec': d}[v]
+        handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '05:7', 'random': d, 'volume': d, 'incsec': d}[v]
 
         handler.post()
 
-        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 5, 1), core.playlists.lookup('Playlist URI').get(), True, 100, 30)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 5, 7), core.playlists.lookup('Playlist URI').get(), False, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
