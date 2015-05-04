@@ -74,6 +74,7 @@ dev
 - Added tests.
 - Fixed nondeterministic effects when cancelling and setting alarm again within 5 seconds (prevent stale ``idle()`` timers).
 - Fixed minor math bug in gradual volume increasing.
+- Leading zero for hours of current time in *Alarm state*.
 
 v0.1.4
 ----------------------------------------
