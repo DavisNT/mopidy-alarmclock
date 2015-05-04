@@ -10,7 +10,6 @@ from mopidy_alarmclock import http
 
 class HttpTest(unittest.TestCase):
 
-    @mock.patch('mopidy_alarmclock.http.datetime.datetime.now')
     def test_SetAlarmRequestHandler(self, mock_now):
         config = mock.Mock()
         core = mock.Mock()
@@ -26,7 +25,6 @@ class HttpTest(unittest.TestCase):
         handler.redirect = mock.Mock()
         handler.get_argument = mock.Mock()
         handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8:00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
-        mock_now.side_effect = datetime.datetime(2015, 5, 3, 11, 23, 31, 811)
 
         handler.post()
 
