@@ -173,7 +173,7 @@ class AlarmManagerTest(unittest.TestCase):
         am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
 
         # Ensure that alarm went off (incomplete test)
-        self.assertEqual(core.playback.play.call_count, 1)
+        core.playback.play.assert_called_once_with()
         self.assertEqual(core.playback.volume, 83)
 
         self.assertFalse(am.is_set())
@@ -510,12 +510,11 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.tracklist.random, True)
         self.assertEqual(core.playback.mute, False)
         self.assertEqual(core.playback.volume, 1)  # First step of gradual volume increasing
-        self.assertEqual(core.playback.stop.call_count, 1)
-        self.assertEqual(core.tracklist.clear.call_count, 1)
-        self.assertEqual(core.tracklist.add.call_count, 1)
+        core.playback.stop.assert_called_once_with()
+        core.tracklist.clear.assert_called_once_with()
         core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
-        self.assertEqual(core.playback.next.call_count, 1)
-        self.assertEqual(core.playback.play.call_count, 1)
+        core.playback.next.assert_called_once_with()
+        core.playback.play.assert_called_once_with()
 
         # Further tests of gradual volume increasing
         time.sleep(5.67)  # Race conditions already prevented by previous sleep()
