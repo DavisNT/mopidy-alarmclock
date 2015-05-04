@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 import unittest
 
-import mock
-
 from freezegun import freeze_time
+
+import mock
 
 from mopidy_alarmclock import http
 
@@ -31,10 +31,7 @@ class HttpTest(unittest.TestCase):
         handler.post()
 
         self.assertEqual(alarm_manager.set_alarm.call_count, 1)
-        self.assertEqual(alarm_manager.set_alarm.call_args[0][1], core.playlists.lookup('Playlist URI').get())
-        self.assertEqual(alarm_manager.set_alarm.call_args[0][2], True)
-        self.assertEqual(alarm_manager.set_alarm.call_args[0][3], 81)
-        self.assertEqual(alarm_manager.set_alarm.call_args[0][4], 23)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 8, 0), core.playlists.lookup('Playlist URI').get(), True, 81, 23)
 
     # TODO Use Tornado unit testing
     # TODO Write more (granular + comprehensive) tests
