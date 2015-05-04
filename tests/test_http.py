@@ -27,7 +27,7 @@ class HttpTest(unittest.TestCase):
         handler.initialize(config, core, alarm_manager, msg_store)
         handler.redirect = mock.Mock()
         handler.get_argument = mock.Mock()
-        
+
         # Test 1
         handler.get_argument.side_effect = lambda v, d: {'playlist': 'Playlist URI', 'time': '8:00', 'random': '1', 'volume': '81', 'incsec': '23'}[v]
 
