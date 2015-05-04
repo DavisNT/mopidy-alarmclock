@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import datetime
 import unittest
 
 import mock
@@ -10,7 +9,7 @@ from mopidy_alarmclock import http
 
 class HttpTest(unittest.TestCase):
 
-    def test_SetAlarmRequestHandler(self, mock_now):
+    def test_SetAlarmRequestHandler(self):
         config = mock.Mock()
         core = mock.Mock()
         alarm_manager = mock.Mock()
