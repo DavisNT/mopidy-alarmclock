@@ -15,7 +15,7 @@ class states:
 
 class AlarmManager(object):
     clock_datetime = None  # datetime of when the alarm clock begins to play music
-    playlist = None  # playlist to play
+    playlist = None  # URI of playlist to play
     random_mode = None  # True if the playlist will be played in shuffle mode
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
@@ -32,6 +32,9 @@ class AlarmManager(object):
 
     def get_ring_time(self):
         return self.clock_datetime.strftime('%H:%M')
+
+    def get_playlist(self):
+        return self.core.playlists.lookup(self.playlist).get()
 
     def get_seconds_since_midnight(self):
         # snippet found here http://stackoverflow.com/a/15971505/927592
@@ -79,7 +82,7 @@ class AlarmManager(object):
     def play(self):
         self.core.playback.stop()
         self.core.tracklist.clear()
-        self.core.tracklist.add(self.playlist.tracks)
+        self.core.tracklist.add(self.get_playlist().tracks)
 
         self.core.tracklist.repeat = True
 

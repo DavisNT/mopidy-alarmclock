@@ -16,7 +16,7 @@
     </div>
     <div class="panel-body">
         <p>
-            The alarm will start at <strong>{{ alarm_manager.get_ring_time() }}</strong> and play playlist <strong>{{ alarm_manager.playlist.name }}</strong> with <strong>{{ alarm_manager.volume }}% volume</strong> (time to full volume {{ alarm_manager.volume_increase_seconds }} sec).<br/>
+            The alarm will start at <strong>{{ alarm_manager.get_ring_time() }}</strong> and play playlist <strong>{{ alarm_manager.get_playlist().name }}</strong> with <strong>{{ alarm_manager.volume }}% volume</strong> (time to full volume {{ alarm_manager.volume_increase_seconds }} sec).<br/>
             <span id="clock"></span><br/>
            
             <a role="button" class="btn btn-success btn-large btn-warning" href="/alarmclock/cancel/">Cancel alarm</a>

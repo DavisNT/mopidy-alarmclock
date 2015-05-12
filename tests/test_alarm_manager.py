@@ -28,7 +28,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertTrue(seconds >= 0 and seconds < 86400)
 
     def test02_is_set(self):
-        playlist = 'This playlist should crash on play'
+        playlist = 'Playlist URI'
 
         am = AlarmManager()
 
@@ -43,7 +43,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertFalse(am.is_set())
 
     def test02_set_alarm__threading(self):
-        playlist = 'This playlist should crash on play'
+        playlist = 'Playlist URI'
         threadcount = threading.active_count()
 
         am = AlarmManager()
@@ -95,7 +95,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(threading.active_count(), threadcount)
 
     def test02_get_ring_time(self):
-        playlist = 'This playlist should crash on play'
+        playlist = 'Playlist URI'
 
         am = AlarmManager()
 
@@ -107,8 +107,7 @@ class AlarmManagerTest(unittest.TestCase):
 
     def test03_cancel(self):
         core = mock.Mock()
-        playlist = mock.Mock()
-        playlist.tracks = 'Tracks 811, 821, 823, 827, 829, 839'
+        playlist = 'Playlist URI'
         threadcount = threading.active_count()
 
         am = AlarmManager()
@@ -398,8 +397,8 @@ class AlarmManagerTest(unittest.TestCase):
 
     def test04__integration_1(self):
         core = mock.Mock()
-        playlist = mock.Mock()
-        playlist.tracks = 'Tracks 811, 821, 823, 827, 829, 839'
+        playlist = 'Playlist URI'
+        core.playlists.lookup('Playlist URI').get.side_effect = 'Tracks 811, 821, 823, 827, 829, 839'
         threadcount = threading.active_count()
 
         am = AlarmManager()
@@ -439,6 +438,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertFalse(am.random_mode)
         self.assertEqual(am.volume, 23)
         self.assertEqual(am.volume_increase_seconds, 127)
+        self.assertFalse(core.playlists.lookup.called)
 
         # Cancel alarm
         am.cancel()
@@ -473,6 +473,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.tracklist.add.call_count, 0)
         self.assertEqual(core.playback.next.call_count, 0)
         self.assertEqual(core.playback.play.call_count, 0)
+        self.assertFalse(core.playlists.lookup.called)
 
         # Tests a few seconds AFTER alarm START
         time.sleep(8)
@@ -487,6 +488,7 @@ class AlarmManagerTest(unittest.TestCase):
         core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
         core.playback.next.assert_called_once_with()
         core.playback.play.assert_called_once_with()
+        core.playlists.lookup.assert_called_once_with('Playlist URI')
 
         # Further tests of gradual volume increasing
         time.sleep(5.67)  # Race conditions already prevented by previous sleep()

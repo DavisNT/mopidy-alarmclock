@@ -50,7 +50,6 @@ class MainRequestHandler(BaseRequestHandler):
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
         playlist = self.get_argument('playlist', None)
-        playlist = self.core.playlists.lookup(playlist).get()
 
         time_string = self.get_argument('time', None)
         # Based on RE found here http://stackoverflow.com/a/7536768/927592
