@@ -398,7 +398,7 @@ class AlarmManagerTest(unittest.TestCase):
     def test04__integration_1(self):
         core = mock.Mock()
         playlist = 'Playlist URI'
-        core.playlists.lookup('Playlist URI').get.side_effect = 'Tracks 811, 821, 823, 827, 829, 839'
+        core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
         self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
         threadcount = threading.active_count()
 
@@ -439,7 +439,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertFalse(am.random_mode)
         self.assertEqual(am.volume, 23)
         self.assertEqual(am.volume_increase_seconds, 127)
-        self.assertFalse(core.playlists.lookup.called)
+        self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
 
         # Cancel alarm
         am.cancel()
