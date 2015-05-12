@@ -68,6 +68,11 @@ Project resources
 Changelog
 =========
 
+dev
+----------------------------------------
+
+- Refactoring for improved alarm scheduler.
+
 v0.1.5
 ----------------------------------------
 
