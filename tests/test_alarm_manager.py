@@ -399,6 +399,7 @@ class AlarmManagerTest(unittest.TestCase):
         core = mock.Mock()
         playlist = 'Playlist URI'
         core.playlists.lookup('Playlist URI').get.side_effect = 'Tracks 811, 821, 823, 827, 829, 839'
+        self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
         threadcount = threading.active_count()
 
         am = AlarmManager()
@@ -473,7 +474,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.tracklist.add.call_count, 0)
         self.assertEqual(core.playback.next.call_count, 0)
         self.assertEqual(core.playback.play.call_count, 0)
-        self.assertFalse(core.playlists.lookup.called)
+        self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
 
         # Tests a few seconds AFTER alarm START
         time.sleep(8)
@@ -488,7 +489,7 @@ class AlarmManagerTest(unittest.TestCase):
         core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
         core.playback.next.assert_called_once_with()
         core.playback.play.assert_called_once_with()
-        core.playlists.lookup.assert_called_once_with('Playlist URI')
+        self.assertEqual(core.playlists.lookup.call_count, 2)
 
         # Further tests of gradual volume increasing
         time.sleep(5.67)  # Race conditions already prevented by previous sleep()
