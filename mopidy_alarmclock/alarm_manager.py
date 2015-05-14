@@ -84,6 +84,8 @@ class AlarmManager(object):
         self.core.tracklist.clear()
         self.core.tracklist.add(self.get_playlist().tracks)
 
+        self.core.tracklist.consume = False
+        self.core.tracklist.single = False
         self.core.tracklist.repeat = True
 
         self.core.tracklist.random = self.random_mode
