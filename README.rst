@@ -72,6 +72,7 @@ dev
 ----------------------------------------
 
 - Refactoring for improved alarm scheduler.
+- Disable *Consume* and *Single* playback modes.
 
 v0.1.5
 ----------------------------------------
