@@ -2,8 +2,8 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import datetime
-import time
 import os
+import time
 from threading import Timer
 
 
