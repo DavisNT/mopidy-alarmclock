@@ -72,6 +72,7 @@ dev
 ----------------------------------------
 
 - Refactoring for improved alarm scheduler.
+- Added `backup alarm sound <http://soundbible.com/1787-Annoying-Alarm-Clock.html>`_ (in case selected playlist is not accessible).
 - Disable *Consume* and *Single* playback modes.
 
 v0.1.5
