@@ -89,7 +89,7 @@ class AlarmManager(object):
 #            if self.core.tracklist.length < 1:
 #                raise Exception('Tracklist empty')
 #        except:
-#            self.core.tracklist.add(None, 0, 'file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3'))
+        self.core.tracklist.add(None, 0, 'file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3'))
 
         self.core.tracklist.consume = False
         self.core.tracklist.single = False
