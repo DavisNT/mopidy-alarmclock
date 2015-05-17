@@ -86,8 +86,8 @@ class AlarmManager(object):
 
         try:
             self.core.tracklist.add(self.get_playlist().tracks)
-            if self.core.tracklist.length < 1:
-                raise Exception('Tracklist empty')
+#            if self.core.tracklist.length < 1:
+#                raise Exception('Tracklist empty')
         except:
             self.core.tracklist.add(None, 0, 'file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3'))
 
