@@ -94,6 +94,36 @@ class AlarmManagerTest(unittest.TestCase):
 
         self.assertEqual(threading.active_count(), threadcount)
 
+    def test02_set_alarm__empty_playlist(self):
+        core = mock.Mock()
+        playlist = 'Playlist URI'
+        core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
+        core.tracklist.length = 4
+        self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
+
+        # Set alarm to PAST
+        am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
+
+        # Ensure that tracks were added
+        self.assertEqual(core.playlists.lookup.call_count, 2)
+        core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
+        core.playback.play.assert_called_once_with()
+
+        # Cleanup and re-setup
+        core.tracklist.add.reset_mock()
+        core.playback.play.reset_mock()
+        core.tracklist.length = 0  # Simulate empty play queue
+
+        # Set alarm to PAST
+        am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
+
+        # Ensure that tracks were added
+        self.assertEqual(core.playlists.lookup.call_count, 3)
+        self.assertEqual(core.tracklist.add.call_count, 2)
+        core.tracklist.add.assert_called_with('Tracks 811, 821, 823, 827, 829, 839')
+        core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
+        core.playback.play.assert_called_once_with()
+
     def test02_get_ring_time(self):
         playlist = 'Playlist URI'
 
