@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import datetime
+import os
 import threading
 import time
 import unittest
@@ -100,6 +101,9 @@ class AlarmManagerTest(unittest.TestCase):
         core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
         core.tracklist.length = 4
         self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
+
+        am = AlarmManager()
+        am.get_core(core)
 
         # Set alarm to PAST
         am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
