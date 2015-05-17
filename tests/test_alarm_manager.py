@@ -124,7 +124,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Ensure that tracks were added
         self.assertEqual(core.playlists.lookup.call_count, 3)
         self.assertEqual(core.tracklist.add.call_count, 2)
-        core.tracklist.add.assert_called_with('Tracks 811, 821, 823, 827, 829, 839')
+        core.tracklist.add.assert_any_call('Tracks 811, 821, 823, 827, 829, 839')
         core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
         core.playback.play.assert_called_once_with()
 
