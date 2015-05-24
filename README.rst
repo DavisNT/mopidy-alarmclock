@@ -74,6 +74,7 @@ dev
 - Refactoring for improved alarm scheduler.
 - Added `backup alarm sound <http://soundbible.com/1787-Annoying-Alarm-Clock.html>`_ (in case selected playlist is missing).
 - Disable *Consume* and *Single* playback modes.
+- Fixed incorrect Mopidy version requirement.
 
 v0.1.5
 ----------------------------------------
