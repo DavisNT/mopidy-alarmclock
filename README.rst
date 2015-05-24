@@ -75,6 +75,7 @@ dev
 - Added `backup alarm sound <http://soundbible.com/1787-Annoying-Alarm-Clock.html>`_ (in case selected playlist is missing).
 - Disable *Consume* and *Single* playback modes.
 - Fixed incorrect Mopidy version requirement.
+- Misc refactoring.
 
 v0.1.5
 ----------------------------------------

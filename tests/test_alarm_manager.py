@@ -265,7 +265,8 @@ class AlarmManagerTest(unittest.TestCase):
 
         am = AlarmManager()
         am.get_core(core)
-        core.playback.volume = 14  # Set volume before test to 14 (Mopidy 0.x API on query)
+        core.playback.volume = mock.Mock()
+        core.playback.volume.get.side_effect = 14  # Set volume before test to 14
 
         self.assertEqual(threading.active_count(), threadcount)
 
@@ -418,15 +419,18 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(core.playback.volume, 35)
         self.assertEqual(threading.active_count(), threadcount + 1)
 
-        core.playback.volume = 14  # Intervention: set volume to 14 (Mopidy 0.x API on query)
+        core.playback.volume = mock.Mock()
+        core.playback.volume.get.side_effect = 14  # Intervention: set volume to 14
         self.assertEqual(threading.active_count(), threadcount + 1)
 
         time.sleep(1)
-        self.assertEqual(core.playback.volume, 14)
+        self.assertIsInstance(core.playback.volume, mock.Mock)
+        self.assertEqual(core.playback.volume.get(), 14)
         self.assertEqual(threading.active_count(), threadcount)
 
         time.sleep(5)  # More than 3x increase step time
-        self.assertEqual(core.playback.volume, 14)
+        self.assertIsInstance(core.playback.volume, mock.Mock)
+        self.assertEqual(core.playback.volume.get(), 14)
         self.assertEqual(threading.active_count(), threadcount)
 
     def test04__integration_1(self):
