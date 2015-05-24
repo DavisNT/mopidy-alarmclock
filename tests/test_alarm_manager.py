@@ -266,7 +266,7 @@ class AlarmManagerTest(unittest.TestCase):
         am = AlarmManager()
         am.get_core(core)
         core.playback.volume = mock.Mock()
-        core.playback.volume.get.side_effect = 14  # Set volume before test to 14
+        core.playback.volume.get.side_effect = lambda: 14  # Set volume before test to 14
 
         self.assertEqual(threading.active_count(), threadcount)
 
@@ -420,7 +420,7 @@ class AlarmManagerTest(unittest.TestCase):
         self.assertEqual(threading.active_count(), threadcount + 1)
 
         core.playback.volume = mock.Mock()
-        core.playback.volume.get.side_effect = 14  # Intervention: set volume to 14
+        core.playback.volume.get.side_effect = lambda: 14  # Intervention: set volume to 14
         self.assertEqual(threading.active_count(), threadcount + 1)
 
         time.sleep(1)
