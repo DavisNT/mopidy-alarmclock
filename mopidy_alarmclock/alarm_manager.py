@@ -119,9 +119,11 @@ class AlarmManager(object):
 
     def adjust_volume(self, target_volume, increase_duration, step_no):
         number_of_steps = min(target_volume, increase_duration)
-        current_volume = self.core.playback.volume
-        if callable(getattr(current_volume, 'get', None)):  # workaround for Mopidy 1.0
-            current_volume = current_volume.get()
+        current_volume = None
+        try:
+            current_volume = self.core.playback.volume.get()
+        except:
+            pass
         if step_no == 0 or not isinstance(current_volume, int) or current_volume == int(round(target_volume * (step_no) / (number_of_steps + 1))):
             if step_no >= number_of_steps:  # this design should prevent floating-point edge-case bugs (in case such bugs could be possible here)
                 self.core.playback.volume = target_volume
