@@ -4,6 +4,7 @@ include LICENSE
 include MANIFEST.in
 include README.rst
 include mopidy_alarmclock/ext.conf
+include mopidy_alarmclock/backup-alarm.mp3
 
 recursive-include mopidy_alarmclock/templates *
 recursive-include mopidy_alarmclock/static *
