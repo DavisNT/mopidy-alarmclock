@@ -99,7 +99,7 @@ class AlarmManagerTest(unittest.TestCase):
         core = mock.Mock()
         playlist = 'Playlist URI'
         core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
-        core.tracklist.length = 4
+        core.tracklist.length.get.side_effect = lambda: 4
         self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
 
         am = AlarmManager()
@@ -116,7 +116,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Cleanup and re-setup
         core.tracklist.add.reset_mock()
         core.playback.play.reset_mock()
-        core.tracklist.length = 0  # Simulate empty play queue
+        core.tracklist.length.get.side_effect = lambda: 0  # Simulate empty play queue
 
         # Set alarm to PAST
         am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
