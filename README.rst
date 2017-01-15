@@ -10,11 +10,11 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=master
+.. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=develop
     :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
     :alt: Travis-CI build status
 
-.. image:: https://coveralls.io/repos/DavisNT/mopidy-alarmclock/badge.svg
+.. image:: https://coveralls.io/repos/DavisNT/mopidy-alarmclock/badge.svg?branch=develop
     :target: https://coveralls.io/r/DavisNT/mopidy-alarmclock
     :alt: Coveralls test coverage
 
@@ -62,15 +62,16 @@ Project resources
 
 - `Source code <https://github.com/DavisNT/mopidy-alarmclock>`_
 - `Issue tracker <https://github.com/DavisNT/mopidy-alarmclock/issues>`_
-- `Development branch tarball <https://github.com/DavisNT/mopidy-alarmclock/archive/master.tar.gz#egg=Mopidy-AlarmClock-dev>`_
+- `Development branch tarball <https://github.com/DavisNT/mopidy-alarmclock/archive/develop.tar.gz#egg=Mopidy-AlarmClock-dev>`_
 
 
 Changelog
 =========
 
-dev
+v0.1.6
 ----------------------------------------
 
+- Changed branching model to `git-flow <http://nvie.com/posts/a-successful-git-branching-model/>`_.
 - Refactoring for improved alarm scheduler.
 - Added `backup alarm sound <http://soundbible.com/1787-Annoying-Alarm-Clock.html>`_ (in case selected playlist is missing).
 - Disable *Consume* and *Single* playback modes.
