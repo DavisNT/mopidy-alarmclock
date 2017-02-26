@@ -64,7 +64,7 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="volume">Alarm volume</label>
               <div class="col-md-4">
-                <input type="range" name="volume" id="volume" class="form-control" min="1" max="100" value="{{ alarm.volume }}" title="{{ alarm.volume }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
+                <input type="range" name="volume" class="form-control volume" min="1" max="100" value="{{ alarm.volume }}" title="{{ alarm.volume }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
               </div>
             </div>
 
@@ -114,6 +114,6 @@ updateClock();
 window.setInterval(updateClock, 1000);
 
 $('.clockpicker').clockpicker({'autoclose': true});
-$('#volume').change();
+$('.volume').change();
 </script>
 {% end %}
