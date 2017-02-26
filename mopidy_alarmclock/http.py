@@ -48,8 +48,19 @@ class MainRequestHandler(BaseRequestHandler):
         ))
 
 
+class DeleteAlarmRequestHandler(BaseRequestHandler):
+    def post(self):
+        alarmidx = int(self.get_argument('alarm', -1))
+        if not 0 <= alarmidx < len(self.alarm_manager.alarms):
+            self.send_message('bad')
+            return
+        del self.alarm_manager.alarms[alarmidx]
+        self.send_message('cancel')
+
+
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
+        # FIXME: Code duplication
         alarmidx = int(self.get_argument('alarm', -1))
         if not 0 <= alarmidx < len(self.alarm_manager.alarms):
             self.send_message('bad')
@@ -57,7 +68,6 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         alarm = self.alarm_manager.alarms[alarmidx]
 
         enabled = bool(self.get_argument('enabled', False))
-
         playlist = self.get_argument('playlist', None)
 
         time_string = self.get_argument('time', None)
@@ -91,12 +101,6 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             self.send_message('format')
 
 
-class CancelAlarmRequestHandler(BaseRequestHandler):
-    def get(self):
-        self.alarm_manager.cancel()
-        self.send_message('cancel')
-
-
 class MessageStore(object):
     msg_code = None  # Message to be stored
 
@@ -114,7 +118,7 @@ def factory_decorator(alarm_manager, msg_store):
 
             bind('/', MainRequestHandler),
             bind('/set/', SetAlarmRequestHandler),
-            bind('/cancel/', CancelAlarmRequestHandler),
+            bind('/delete/', DeleteAlarmRequestHandler),
         ]
 
     return app_factory

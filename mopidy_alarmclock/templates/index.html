@@ -73,11 +73,18 @@
             </div>
 
             <div class="form-actions">
-                    <input type="submit" class="btn btn-primary" value="Save">
-                    <input type="submit" class="btn btn-danger" value="Delete">
+              <input type="submit" class="btn btn-primary" value="Save">
             </div>
 
             </form>
+
+            <div class="form-actions">
+              <form class="form-horizontal" action="/alarmclock/delete/" method="post">
+                <input type="hidden" name="alarm" value="{{ i }}">
+                <input type="submit" class="btn btn-danger" value="Delete">
+              </form>
+            </div>
+
         </p>
     </div>
 </div>
