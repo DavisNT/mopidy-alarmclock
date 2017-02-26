@@ -11,17 +11,21 @@
 
 {% for i, alarm in enumerate(alarm_manager.alarms) %}
 <div class="panel panel-default">
+
     <div class="panel-heading">
         <h3 class="panel-title">Alarm {{ i+1 }}</h3>
     </div>
+
     <div class="panel-body">
         <p>
             <form class="form-horizontal" action="/alarmclock/set/" method="post"> <!-- TODO proper mention of the app name instead of putting it raw in the URL-->
 
+            <input type="hidden" name="alarm" value="{{ i }}">
+
             <div class="form-group clockpicker">
               <label class="col-md-4 control-label" for="time">Time</label>
               <div class="col-md-4">
-                <input type="text" name="time" class="form-control" value="{{ alarm.clock_datetime }}">
+                <input type="text" name="time" class="form-control" value="{{ alarm.formatted_ring_time }}">
               </div>
             </div>
 
@@ -61,12 +65,11 @@
 
             <div class="form-actions">
                     <input type="submit" class="btn btn-primary" value="Submit">
-                    <input type="submit" class="btn btn-primary" value="Delete">
+                    <input type="submit" class="btn btn-danger" value="Delete">
             </div>
 
             </form>
         </p>
-
     </div>
 </div>
 {% end %}

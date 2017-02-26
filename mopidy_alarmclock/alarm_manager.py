@@ -22,6 +22,10 @@ class Alarm(object):
     volume_increase_seconds = None  # Seconds to full volume
     state = states.DISABLED
 
+    @property
+    def formatted_ring_time(self):
+        return self.clock_datetime.strftime('%H:%M')
+
 
 class AlarmManager(object):
     core = None
@@ -37,9 +41,6 @@ class AlarmManager(object):
 
     def is_set(self):
         return (self.alarms[0].state == states.WAITING)
-
-    def get_ring_time(self):
-        return self.alarms[0].clock_datetime.strftime('%H:%M')
 
     def get_playlist(self):
         return self.core.playlists.lookup(self.alarms[0].playlist).get()

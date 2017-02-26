@@ -15,6 +15,7 @@ MESSAGES = {
     'ok': (u'Alarm has been properly set.', 'success'),
     'format': (u'The date\'s format you specified is incorrect.', 'danger'),
     'cancel': (u'Alarm has been canceled.', 'success'),
+    'bad': (u'The request was invalid.', 'danger'),
 }
 
 
@@ -49,6 +50,12 @@ class MainRequestHandler(BaseRequestHandler):
 
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
+        alarmidx = int(self.get_argument('alarm', -1))
+        if not 0 <= alarmidx < len(self.alarm_manager.alarms):
+            self.send_message('bad')
+            return
+        alarm = self.alarm_manager.alarms[alarmidx]
+
         playlist = self.get_argument('playlist', None)
 
         time_string = self.get_argument('time', None)
@@ -58,11 +65,10 @@ class SetAlarmRequestHandler(BaseRequestHandler):
 
         # Get and sanitize volume and seconds to full volume
         volume = int(self.get_argument('volume', 100))
+        volume = max(min(volume, 100), 1)
+
         volume_increase_seconds = int(self.get_argument('incsec', 30))
-        if volume < 1 or volume > 100:
-            volume = 100
-        if volume_increase_seconds < 0 or volume_increase_seconds > 300:
-            volume_increase_seconds = 30
+        volume_increase_seconds = max(min(volume_increase_seconds, 300), 0)
 
         if matched:
             time_comp = map(lambda x: int(x), matched.groups())
@@ -72,7 +78,12 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             if datetime.datetime.now() >= dt:
                 dt += datetime.timedelta(days=1)
 
-            self.alarm_manager.set_alarm(dt, playlist, random_mode, volume, volume_increase_seconds)
+            alarm.clock_datetime = dt
+            alarm.playlist = playlist
+            alarm.random_mode = random_mode
+            alarm.volume = volume
+            alarm.volume_increase_seconds = volume_increase_seconds
+            # alarm.state = states.WAITING
             self.send_message('ok')
         else:
             self.send_message('format')
