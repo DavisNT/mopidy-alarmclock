@@ -14,28 +14,35 @@ class states:
     CANCELED = 3
 
 
-class AlarmManager(object):
+class Alarm(object):
     clock_datetime = None  # datetime of when the alarm clock begins to play music
     playlist = None  # URI of playlist to play
     random_mode = None  # True if the playlist will be played in shuffle mode
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
-    core = None
     state = states.DISABLED
+
+
+class AlarmManager(object):
+    core = None
+    alarms = None
     idle_timer = None
+
+    def __init__(self):
+        self.alarms = [Alarm()]
 
     def get_core(self, core):
         self.core = core
         return self
 
     def is_set(self):
-        return (self.state == states.WAITING)
+        return (self.alarms[0].state == states.WAITING)
 
     def get_ring_time(self):
-        return self.clock_datetime.strftime('%H:%M')
+        return self.alarms[0].clock_datetime.strftime('%H:%M')
 
     def get_playlist(self):
-        return self.core.playlists.lookup(self.playlist).get()
+        return self.core.playlists.lookup(self.alarms[0].playlist).get()
 
     def get_seconds_since_midnight(self):
         # snippet found here http://stackoverflow.com/a/15971505/927592
@@ -43,15 +50,15 @@ class AlarmManager(object):
         return int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
 
     def reset(self):
-        self.clock_datetime = None
-        self.playlist = None
-        self.random_mode = None
-        self.volume = None
-        self.volume_increase_seconds = None
+        self.alarms[0].clock_datetime = None
+        self.alarms[0].playlist = None
+        self.alarms[0].random_mode = None
+        self.alarms[0].volume = None
+        self.alarms[0].volume_increase_seconds = None
 
     def cancel(self):
         self.reset()
-        self.state = states.CANCELED
+        self.alarms[0].state = states.CANCELED
         if self.idle_timer is not None:
             while True:
                 t = self.idle_timer
@@ -62,12 +69,12 @@ class AlarmManager(object):
                 time.sleep(0.05)
 
     def set_alarm(self, clock_datetime, playlist, random_mode, volume, volume_increase_seconds):
-        self.clock_datetime = clock_datetime
-        self.playlist = playlist
-        self.random_mode = random_mode
-        self.volume = volume
-        self.volume_increase_seconds = volume_increase_seconds
-        self.state = states.WAITING
+        self.alarms[0].clock_datetime = clock_datetime
+        self.alarms[0].playlist = playlist
+        self.alarms[0].random_mode = random_mode
+        self.alarms[0].volume = volume
+        self.alarms[0].volume_increase_seconds = volume_increase_seconds
+        self.alarms[0].state = states.WAITING
 
         if self.idle_timer is not None:
             while True:
@@ -95,22 +102,22 @@ class AlarmManager(object):
         self.core.tracklist.single = False
         self.core.tracklist.repeat = True
 
-        self.core.tracklist.random = self.random_mode
+        self.core.tracklist.random = self.alarms[0].random_mode
         if self.core.tracklist.random:
             self.core.playback.next()
 
         self.core.playback.mute = False
 
-        self.adjust_volume(self.volume, self.volume_increase_seconds, 0)
+        self.adjust_volume(self.alarms[0].volume, self.alarms[0].volume_increase_seconds, 0)
 
         self.core.playback.play()
 
         self.reset()
-        self.state = states.DISABLED
+        self.alarms[0].state = states.DISABLED
 
     def idle(self):
-        if self.state == states.WAITING:  # alarm can be canceled, check if not
-            if datetime.datetime.now() >= self.clock_datetime:  # time to make some noise
+        if self.alarms[0].state == states.WAITING:  # alarm can be canceled, check if not
+            if datetime.datetime.now() >= self.alarms[0].clock_datetime:  # time to make some noise
                 self.play()
             else:
                 t = Timer(5, self.idle)  # check each 5 seconds if the alarm must start or not
@@ -129,5 +136,5 @@ class AlarmManager(object):
                 self.core.playback.volume = target_volume
             else:
                 self.core.playback.volume = int(round(target_volume * (step_no + 1) / (number_of_steps + 1)))
-                t = Timer(increase_duration / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
+                t = Timer(increase_duration / number_of_steps, self.alarms[0].adjust_volume, [target_volume, increase_duration, step_no + 1])
                 t.start()
