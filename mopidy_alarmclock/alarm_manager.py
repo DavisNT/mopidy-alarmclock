@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class Alarm(object):
-    clock_datetime = None  # datetime of when the alarm clock begins to play music
+    alarm_time = None  # datetime of when the alarm clock begins to play music
     playlist = None  # URI of playlist to play
     random_mode = None  # True if the playlist will be played in shuffle mode
     volume = None  # Alarm volume
@@ -19,11 +19,25 @@ class Alarm(object):
     enabled = False
 
     def __init__(self):
-        self.clock_datetime = datetime.datetime.now()
+        self.alarm_time = datetime.time()
+
+    @property
+    def datetime_today(self):
+        '''
+        Returns a datetime representing the time the alarm will go off today.
+        '''
+        now = datetime.datetime.now()
+        midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        delta = datetime.timedelta(hours=self.alarm_time.hour, minutes=self.alarm_time.minute)
+        return midnight + delta
 
     @property
     def formatted_ring_time(self):
-        return self.clock_datetime.strftime('%H:%M')
+        return self.alarm_time.strftime('%H:%M')
+
+    def __str__(self):
+        # TODO: Make this more useful
+        return self.formatted_ring_time + ' alarm'
 
 
 class AlarmManager(object):
@@ -32,7 +46,7 @@ class AlarmManager(object):
     last_fired = None
 
     def __init__(self):
-        self.alarms = [Alarm(), Alarm()]
+        self.alarms = [Alarm()]
 
         # Start the timer
         self.last_fired = datetime.datetime.now()
@@ -80,18 +94,18 @@ class AlarmManager(object):
         self.core.playback.play()
 
     def idle(self):
-        logger.debug('Timer firing')
+        logger.debug('Alarm check timer is now firing')
+        now = datetime.datetime.now()
 
         # TODO: Disable the timer if none of our alarms are enabled
         for alarm in self.alarms:
-            if not alarm.enabled:
-                continue
-            if self.last_fired < alarm.clock_datetime:
+            if alarm.enabled and self.last_fired < alarm.datetime_today <= now:
+                logger.info('Triggering alarm {}'.format(alarm))
                 self.play(alarm)
                 break  # Assume that multiple alarms don't fire
 
         # Rinse, repeat
-        self.last_fired = datetime.datetime.now()
+        self.last_fired = now
         Timer(5, self.idle).start()
 
     def adjust_volume(self, target_volume, increase_duration, step_no):

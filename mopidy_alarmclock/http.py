@@ -90,13 +90,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
 
         if matched:
             time_comp = map(lambda x: int(x), matched.groups())
-            time = datetime.time(hour=time_comp[0], minute=time_comp[1])
-
-            dt = datetime.datetime.combine(datetime.datetime.now(), time)
-            if datetime.datetime.now() >= dt:
-                dt += datetime.timedelta(days=1)
-
-            alarm.clock_datetime = dt
+            alarm.alarm_time = datetime.time(hour=time_comp[0], minute=time_comp[1])
             alarm.playlist = playlist
             alarm.random_mode = random_mode
             alarm.volume = volume
