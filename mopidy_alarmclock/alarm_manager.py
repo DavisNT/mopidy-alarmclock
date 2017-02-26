@@ -2,16 +2,12 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import datetime
+import logging
 import os
 import time
 from threading import Timer
 
-
-# Enum of states
-class states:
-    DISABLED = 1
-    WAITING = 2
-    CANCELED = 3
+logger = logging.getLogger(__name__)
 
 
 class Alarm(object):
@@ -20,7 +16,6 @@ class Alarm(object):
     random_mode = None  # True if the playlist will be played in shuffle mode
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
-    state = states.DISABLED
     enabled = False
 
     def __init__(self):
@@ -34,11 +29,15 @@ class Alarm(object):
 class AlarmManager(object):
     core = None
     alarms = None
-    idle_timer = None
+    last_fired = None
 
     def __init__(self):
-        self.alarms = [Alarm(),Alarm()]
-    
+        self.alarms = [Alarm(), Alarm()]
+
+        # Start the timer
+        self.last_fired = datetime.datetime.now()
+        self.idle()
+
     def create_alarm(self):
         # TODO: Fill out defaults from config file
         self.alarms.append(Alarm())
@@ -46,9 +45,6 @@ class AlarmManager(object):
     def get_core(self, core):
         self.core = core
         return self
-
-    def is_set(self):
-        return (self.alarms[0].state == states.WAITING)
 
     def get_playlist(self):
         return self.core.playlists.lookup(self.alarms[0].playlist).get()
@@ -58,45 +54,7 @@ class AlarmManager(object):
         now = datetime.datetime.now()
         return int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
 
-    def reset(self):
-        self.alarms[0].clock_datetime = None
-        self.alarms[0].playlist = None
-        self.alarms[0].random_mode = None
-        self.alarms[0].volume = None
-        self.alarms[0].volume_increase_seconds = None
-
-    def cancel(self):
-        self.reset()
-        self.alarms[0].state = states.CANCELED
-        if self.idle_timer is not None:
-            while True:
-                t = self.idle_timer
-                t.cancel()
-                if not t.is_alive():
-                    if t is self.idle_timer:  # Ensure no new timer has been created
-                        break
-                time.sleep(0.05)
-
-    def set_alarm(self, clock_datetime, playlist, random_mode, volume, volume_increase_seconds):
-        self.alarms[0].clock_datetime = clock_datetime
-        self.alarms[0].playlist = playlist
-        self.alarms[0].random_mode = random_mode
-        self.alarms[0].volume = volume
-        self.alarms[0].volume_increase_seconds = volume_increase_seconds
-        self.alarms[0].state = states.WAITING
-
-        if self.idle_timer is not None:
-            while True:
-                t = self.idle_timer
-                t.cancel()
-                if not t.is_alive():
-                    if t is self.idle_timer:  # Ensure no new timer has been created
-                        break
-                time.sleep(0.05)
-
-        self.idle()
-
-    def play(self):
+    def play(self, alarm):
         self.core.playback.stop()
         self.core.tracklist.clear()
 
@@ -111,27 +69,30 @@ class AlarmManager(object):
         self.core.tracklist.single = False
         self.core.tracklist.repeat = True
 
-        self.core.tracklist.random = self.alarms[0].random_mode
+        self.core.tracklist.random = alarm.random_mode
         if self.core.tracklist.random:
             self.core.playback.next()
 
         self.core.playback.mute = False
 
-        self.adjust_volume(self.alarms[0].volume, self.alarms[0].volume_increase_seconds, 0)
+        self.adjust_volume(alarm.volume, alarm.volume_increase_seconds, 0)
 
         self.core.playback.play()
 
-        self.reset()
-        self.alarms[0].state = states.DISABLED
-
     def idle(self):
-        if self.alarms[0].state == states.WAITING:  # alarm can be canceled, check if not
-            if datetime.datetime.now() >= self.alarms[0].clock_datetime:  # time to make some noise
-                self.play()
-            else:
-                t = Timer(5, self.idle)  # check each 5 seconds if the alarm must start or not
-                t.start()
-                self.idle_timer = t  # Atomically set idle_timer to next (alive!!!) timer
+        logger.debug('Timer firing')
+
+        # TODO: Disable the timer if none of our alarms are enabled
+        for alarm in self.alarms:
+            if not alarm.enabled:
+                continue
+            if self.last_fired < alarm.clock_datetime:
+                self.play(alarm)
+                break  # Assume that multiple alarms don't fire
+
+        # Rinse, repeat
+        self.last_fired = datetime.datetime.now()
+        Timer(5, self.idle).start()
 
     def adjust_volume(self, target_volume, increase_duration, step_no):
         number_of_steps = min(target_volume, increase_duration)
