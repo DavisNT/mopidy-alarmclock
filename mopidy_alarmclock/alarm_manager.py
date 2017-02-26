@@ -29,7 +29,7 @@ class AlarmManager(object):
     idle_timer = None
 
     def __init__(self):
-        self.alarms = [Alarm()]
+        self.alarms = [Alarm(),Alarm()]
 
     def get_core(self, core):
         self.core = core

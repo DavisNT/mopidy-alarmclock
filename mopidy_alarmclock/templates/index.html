@@ -9,40 +9,19 @@
 {% end %}
 
 
-{% if alarm_manager.is_set() %}
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h3 class="panel-title">Alarm state</h3>
-    </div>
-    <div class="panel-body">
-        <p>
-            The alarm will start at <strong>{{ alarm_manager.get_ring_time() }}</strong> and play playlist <strong>{{ alarm_manager.get_playlist().name }}</strong> with <strong>{{ alarm_manager.volume }}% volume</strong> (time to full volume {{ alarm_manager.volume_increase_seconds }} sec).<br/>
-            <span id="clock"></span><br/>
-           
-            <a role="button" class="btn btn-success btn-large btn-warning" href="/alarmclock/cancel/">Cancel alarm</a>
-        </p>
-    </div>
-</div>
-
-{% else %}
+{% for i, alarm in enumerate(alarm_manager.alarms) %}
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Alarm state</h3>
+        <h3 class="panel-title">Alarm {{ i+1 }}</h3>
     </div>
     <div class="panel-body">
         <p>
-            No alarm has been set.
-    
             <form class="form-horizontal" action="/alarmclock/set/" method="post"> <!-- TODO proper mention of the app name instead of putting it raw in the URL-->
-
-            <fieldset>
-
-            <legend>Set an alarm</legend>
 
             <div class="form-group clockpicker">
               <label class="col-md-4 control-label" for="time">Time</label>
               <div class="col-md-4">
-                <input type="text" name="time" class="form-control" value="{{ config['def_time'] }}">
+                <input type="text" name="time" class="form-control" value="{{ alarm.clock_datetime }}">
               </div>
             </div>
 
@@ -51,7 +30,7 @@
               <div class="col-md-4">
                 <select id="playlist" name="playlist" class="form-control">
                     {% for playlist in playlists %}
-                        <option value="{{ playlist.uri }}"{% if config['def_playlist'] == playlist.uri or config['def_playlist'] == playlist.name %} selected="selected"{% end %}>{{ playlist.name }}</option>
+                        <option value="{{ playlist.uri }}"{% if alarm.playlist == playlist.uri or alarm.playlist == playlist.name %} selected="selected"{% end %}>{{ playlist.name }}</option>
                     {% end %}
                 </select>
               </div>
@@ -61,7 +40,7 @@
               <label class="col-md-4 control-label" for="checkboxes">Random Track Order</label>
               <div class="col-md-4">
                 <label class="checkbox-inline" for="checkboxes-0">
-                  <input name="random" id="checkboxes-0" value="1" type="checkbox"{% if config['def_random'] %} checked="checked"{% end %}>
+                  <input name="random" id="checkboxes-0" value="1" type="checkbox"{% if alarm.random_mode %} checked="checked"{% end %}>
                 </label>
               </div>
             </div>
@@ -69,22 +48,21 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="volume">Alarm volume</label>
               <div class="col-md-4">
-                <input type="range" name="volume" id="volume" class="form-control" min="1" max="100" value="{{ config['def_volume'] }}" title="{{ config['def_volume'] }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
+                <input type="range" name="volume" id="volume" class="form-control" min="1" max="100" value="{{ alarm.volume }}" title="{{ alarm.volume }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
               </div>
             </div>
 
             <div class="form-group">
               <label class="col-md-4 control-label" for="incsec">Seconds to full volume</label>
               <div class="col-md-4">
-                <input type="range" name="incsec" class="form-control" min="0" max="300" value="{{ config['def_vol_inc_duration'] }}" title="{{ config['def_vol_inc_duration'] }}" onchange="this.title=this.value;">
+                <input type="range" name="incsec" class="form-control" min="0" max="300" value="{{ alarm.volume_increase_seconds }}" title="{{ alarm.volume_increase_seconds }}" onchange="this.title=this.value;">
               </div>
             </div>
 
             <div class="form-actions">
                     <input type="submit" class="btn btn-primary" value="Submit">
+                    <input type="submit" class="btn btn-primary" value="Delete">
             </div>
-
-           </fieldset>
 
             </form>
         </p>
