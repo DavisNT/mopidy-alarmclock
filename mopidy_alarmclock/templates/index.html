@@ -12,6 +12,13 @@
 <p class="text-center" id="clock"></p>
 
 
+<div class="form-actions">
+  <form class="form-horizontal" action="/alarmclock/new/" method="post">
+    <input type="submit" class="btn btn-success" value="New">
+  </form>
+</div>
+
+
 {% for i, alarm in enumerate(alarm_manager.alarms) %}
 <div class="panel panel-default">
 

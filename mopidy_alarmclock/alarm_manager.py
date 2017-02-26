@@ -38,6 +38,10 @@ class AlarmManager(object):
 
     def __init__(self):
         self.alarms = [Alarm(),Alarm()]
+    
+    def create_alarm(self):
+        # TODO: Fill out defaults from config file
+        self.alarms.append(Alarm())
 
     def get_core(self, core):
         self.core = core

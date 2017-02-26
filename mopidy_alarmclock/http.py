@@ -58,6 +58,12 @@ class DeleteAlarmRequestHandler(BaseRequestHandler):
         self.send_message('cancel')
 
 
+class NewAlarmRequestHandler(BaseRequestHandler):
+    def post(self):
+        self.alarm_manager.create_alarm()
+        self.send_message('ok')
+
+
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
         # FIXME: Code duplication
@@ -117,8 +123,9 @@ def factory_decorator(alarm_manager, msg_store):
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
 
             bind('/', MainRequestHandler),
-            bind('/set/', SetAlarmRequestHandler),
             bind('/delete/', DeleteAlarmRequestHandler),
+            bind('/new/', NewAlarmRequestHandler),
+            bind('/set/', SetAlarmRequestHandler),
         ]
 
     return app_factory
