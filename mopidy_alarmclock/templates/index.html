@@ -22,6 +22,15 @@
 
             <input type="hidden" name="alarm" value="{{ i }}">
 
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="checkboxes">Enabled</label>
+              <div class="col-md-4">
+                <label class="checkbox-inline" for="checkboxes-1">
+                  <input name="enabled" id="checkboxes-1" value="1" type="checkbox"{% if alarm.enabled %} checked="checked"{% end %}>
+                </label>
+              </div>
+            </div>
+
             <div class="form-group clockpicker">
               <label class="col-md-4 control-label" for="time">Time</label>
               <div class="col-md-4">
@@ -64,7 +73,7 @@
             </div>
 
             <div class="form-actions">
-                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <input type="submit" class="btn btn-primary" value="Save">
                     <input type="submit" class="btn btn-danger" value="Delete">
             </div>
 

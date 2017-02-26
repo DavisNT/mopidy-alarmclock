@@ -21,6 +21,10 @@ class Alarm(object):
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
     state = states.DISABLED
+    enabled = False
+
+    def __init__(self):
+        self.clock_datetime = datetime.datetime.now()
 
     @property
     def formatted_ring_time(self):

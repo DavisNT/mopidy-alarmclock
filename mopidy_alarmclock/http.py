@@ -56,6 +56,8 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             return
         alarm = self.alarm_manager.alarms[alarmidx]
 
+        enabled = bool(self.get_argument('enabled', False))
+
         playlist = self.get_argument('playlist', None)
 
         time_string = self.get_argument('time', None)
