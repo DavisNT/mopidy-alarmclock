@@ -101,7 +101,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             alarm.random_mode = random_mode
             alarm.volume = volume
             alarm.volume_increase_seconds = volume_increase_seconds
-            # alarm.state = states.WAITING
+            alarm.enabled = enabled
             self.send_message('ok')
         else:
             self.send_message('format')
