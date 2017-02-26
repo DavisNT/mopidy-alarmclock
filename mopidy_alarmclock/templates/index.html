@@ -9,6 +9,9 @@
 {% end %}
 
 
+<p class="text-center" id="clock"></p>
+
+
 {% for i, alarm in enumerate(alarm_manager.alarms) %}
 <div class="panel panel-default">
 
@@ -90,16 +93,10 @@
 </div>
 {% end %}
 
-
-<p class="text-right">
-    This page was rendered at {{ datetime.datetime.now().strftime('%H:%M') }}.
-</p>
-
 {% end %}
 
 {% block extra-js %}
 <script type="text/javascript">
-{% if alarm_manager.is_set() %}
 var secondsSinceMidnight = {{ alarm_manager.get_seconds_since_midnight() }};
 function updateClock() {
     var hh = Math.floor(secondsSinceMidnight / 3600);
@@ -115,9 +112,8 @@ function updateClock() {
 }
 updateClock();
 window.setInterval(updateClock, 1000);
-{% else %}
+
 $('.clockpicker').clockpicker({'autoclose': true});
 $('#volume').change();
-{% end %}
 </script>
 {% end %}
