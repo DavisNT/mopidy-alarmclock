@@ -17,10 +17,11 @@ class Alarm(object):
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
     enabled = False
-    days = [ 0, 1, 2, 3, 4, 5, 6 ] # Weekdays the alarm will fire
+    days = None
 
     def __init__(self):
         self.alarm_time = datetime.time()
+        self.days = [ 0, 1, 2, 3, 4, 5, 6 ] # Weekdays the alarm will fire
 
     @property
     def datetime_today(self):
@@ -69,9 +70,6 @@ class AlarmManager(object):
         self.core = core
         return self
 
-    def get_playlist(self):
-        return self.core.playlists.lookup(self.alarms[0].playlist).get()
-
     def get_seconds_since_midnight(self):
         # snippet found here http://stackoverflow.com/a/15971505/927592
         now = datetime.datetime.now()
@@ -82,10 +80,13 @@ class AlarmManager(object):
         self.core.tracklist.clear()
 
         try:
-            self.core.tracklist.add(self.get_playlist().tracks)
+            playlist = self.core.playlists.lookup(alarm.playlist).get()
+            self.core.tracklist.add(playlist.tracks)
             if self.core.tracklist.length.get() < 1:
                 raise Exception('Tracklist empty')
         except:
+            # TODO: This should be optional
+            logger.exception('Failed to load playlist, playing backup alarm')
             self.core.tracklist.add(None, 0, 'file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3'))
 
         self.core.tracklist.consume = False
@@ -98,7 +99,7 @@ class AlarmManager(object):
 
         self.core.playback.mute = False
 
-        self.adjust_volume(alarm.volume, alarm.volume_increase_seconds, 0)
+        self.adjust_volume(alarm.volume, alarm.volume_increase_seconds)
 
         self.core.playback.play()
 
@@ -117,17 +118,49 @@ class AlarmManager(object):
         self.last_fired = now
         Timer(5, self.idle).start()
 
-    def adjust_volume(self, target_volume, increase_duration, step_no):
-        number_of_steps = min(target_volume, increase_duration)
-        current_volume = None
+    def adjust_volume(self, target_volume, increase_duration):
+        '''
+        Scales the current volume up to or down to the target volume over a
+        few seconds.
+        '''
+
         try:
             current_volume = self.core.playback.volume.get()
         except:
-            pass
-        if step_no == 0 or not isinstance(current_volume, int) or current_volume == int(round(target_volume * (step_no) / (number_of_steps + 1))):
-            if step_no >= number_of_steps:  # this design should prevent floating-point edge-case bugs (in case such bugs could be possible here)
-                self.core.playback.volume = target_volume
-            else:
-                self.core.playback.volume = int(round(target_volume * (step_no + 1) / (number_of_steps + 1)))
-                t = Timer(increase_duration / number_of_steps, self.alarms[0].adjust_volume, [target_volume, increase_duration, step_no + 1])
-                t.start()
+            logger.warning('Could not get current playback volume')
+            self.core.playback.volume = target_volume
+            return
+
+        if target_volume == current_volume:
+            logger.debug('Volume is already the desired level')
+            return
+
+        if increase_duration == 0:
+            logger.debug('Setting volume without scaling')
+            self.core.playback.volume = target_volume
+            return
+
+        # This is when we will finish fading
+        fade_start = datetime.datetime.now()
+        fade_end = fade_start + datetime.timedelta(seconds=increase_duration)
+        logger.debug('Scaling volume from {} to {} from now until {}'.format(current_volume, target_volume, fade_end))
+
+        # Compute the time to increase the volume by 1
+        period = float(increase_duration) / abs(target_volume - current_volume)
+        direction = cmp(target_volume, current_volume)
+
+        def step():
+            now = datetime.datetime.now()
+            if now >= fade_end:
+                logger.debug('Fade deadline has passed, setting volume')
+                self.core.playback_volume = target_volume
+                return
+
+            # We don't know that we fired at the right time, so we can't
+            # just increment current_volume. Calculate where we should be.
+            new_volume = current_volume + direction * int((now - fade_start).total_seconds() / period)
+            logger.debug('Stepping volume to {}, target volume is {}'.format(new_volume, target_volume))
+            self.core.playback.volume = new_volume
+
+            Timer(period, step).start()
+        step()
