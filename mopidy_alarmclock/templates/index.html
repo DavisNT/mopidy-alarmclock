@@ -33,25 +33,25 @@
             <input type="hidden" name="alarm" value="{{ i }}">
 
             <div class="form-group">
-              <label class="col-md-4 control-label" for="checkboxes">Enabled</label>
+              <label class="col-md-4 control-label" for="checkboxes-{{ i }}-1">Enabled</label>
               <div class="col-md-4">
-                <label class="checkbox-inline" for="checkboxes-1">
-                  <input name="enabled" id="checkboxes-1" value="1" type="checkbox"{% if alarm.enabled %} checked="checked"{% end %}>
+                <label class="checkbox-inline" for="checkboxes-{{ i }}-1">
+                  <input name="enabled" id="checkboxes-{{ i }}-1" value="1" type="checkbox"{% if alarm.enabled %} checked="checked"{% end %}>
                 </label>
               </div>
             </div>
 
             <div class="form-group clockpicker">
-              <label class="col-md-4 control-label" for="time">Time</label>
+              <label class="col-md-4 control-label" for="time-{{ i }}">Time</label>
               <div class="col-md-4">
-                <input type="text" name="time" class="form-control" value="{{ alarm.formatted_ring_time }}">
+                <input type="text" id="time-{{ i }}" name="time" class="form-control" value="{{ alarm.formatted_ring_time }}">
               </div>
             </div>
 
             <div class="form-group">
-              <label class="col-md-4 control-label" for="playlist">Playlist</label>
+              <label class="col-md-4 control-label" for="playlist-{{ i }}">Playlist</label>
               <div class="col-md-4">
-                <select id="playlist" name="playlist" class="form-control">
+                <select id="playlist-{{ i }}" name="playlist" class="form-control">
                     {% for playlist in playlists %}
                         <option value="{{ playlist.uri }}"{% if alarm.playlist == playlist.uri or alarm.playlist == playlist.name %} selected="selected"{% end %}>{{ playlist.name }}</option>
                     {% end %}
@@ -60,25 +60,25 @@
             </div>
 
             <div class="form-group">
-              <label class="col-md-4 control-label" for="checkboxes">Random Track Order</label>
+              <label class="col-md-4 control-label" for="checkboxes-{{ i }}-0">Random Track Order</label>
               <div class="col-md-4">
-                <label class="checkbox-inline" for="checkboxes-0">
-                  <input name="random" id="checkboxes-0" value="1" type="checkbox"{% if alarm.random_mode %} checked="checked"{% end %}>
+                <label class="checkbox-inline" for="checkboxes-{{ i }}-0">
+                  <input name="random" id="checkboxes-{{ i }}-0" value="1" type="checkbox"{% if alarm.random_mode %} checked="checked"{% end %}>
                 </label>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="col-md-4 control-label" for="volume">Alarm volume</label>
+              <label class="col-md-4 control-label" for="volume-{{ i }}">Alarm volume</label>
               <div class="col-md-4">
-                <input type="range" name="volume" class="form-control volume" min="1" max="100" value="{{ alarm.volume }}" title="{{ alarm.volume }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
+                <input type="range" id="volume-{{ i }}" name="volume" class="form-control volume" min="1" max="100" value="{{ alarm.volume }}" title="{{ alarm.volume }}" onchange="this.title=this.value; this.style.backgroundColor='rgb(255, '+Math.round(this.value*2.55)+', '+Math.round(this.value*2.55)+')';">
               </div>
             </div>
 
             <div class="form-group">
-              <label class="col-md-4 control-label" for="incsec">Seconds to full volume</label>
+              <label class="col-md-4 control-label" for="incsec-{{ i }}">Seconds to full volume</label>
               <div class="col-md-4">
-                <input type="range" name="incsec" class="form-control" min="0" max="300" value="{{ alarm.volume_increase_seconds }}" title="{{ alarm.volume_increase_seconds }}" onchange="this.title=this.value;">
+                <input type="range" id="incsec-{{ i }}" name="incsec" class="form-control" min="0" max="300" value="{{ alarm.volume_increase_seconds }}" title="{{ alarm.volume_increase_seconds }}" onchange="this.title=this.value;">
               </div>
             </div>
 
