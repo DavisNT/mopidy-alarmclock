@@ -127,7 +127,7 @@ class AlarmManager(object):
         try:
             current_volume = self.core.playback.volume.get()
         except:
-            logger.warning('Could not get current playback volume')
+            logger.exception('Could not get current playback volume')
             self.core.playback.volume = target_volume
             return
 
@@ -153,7 +153,7 @@ class AlarmManager(object):
             now = datetime.datetime.now()
             if now >= fade_end:
                 logger.debug('Fade deadline has passed, setting volume')
-                self.core.playback_volume = target_volume
+                self.core.playback.volume = target_volume
                 return
 
             # We don't know that we fired at the right time, so we can't
