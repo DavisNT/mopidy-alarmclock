@@ -17,6 +17,7 @@ class Alarm(object):
     volume = None  # Alarm volume
     volume_increase_seconds = None  # Seconds to full volume
     enabled = False
+    days = [ 0, 1, 2, 3, 4, 5, 6 ] # Weekdays the alarm will fire
 
     def __init__(self):
         self.alarm_time = datetime.time()
@@ -30,6 +31,14 @@ class Alarm(object):
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
         delta = datetime.timedelta(hours=self.alarm_time.hour, minutes=self.alarm_time.minute)
         return midnight + delta
+
+    @property
+    def set_for_today(self):
+        '''
+        Returns whether the alarm is set to go off on this day of the week.
+        '''
+        today = datetime.datetime.now().weekday()
+        return today in self.days
 
     @property
     def formatted_ring_time(self):
@@ -99,7 +108,7 @@ class AlarmManager(object):
 
         # TODO: Disable the timer if none of our alarms are enabled
         for alarm in self.alarms:
-            if alarm.enabled and self.last_fired < alarm.datetime_today <= now:
+            if alarm.enabled and alarm.set_for_today and self.last_fired < alarm.datetime_today <= now:
                 logger.info('Triggering alarm {}'.format(alarm))
                 self.play(alarm)
                 break  # Assume that multiple alarms don't fire
