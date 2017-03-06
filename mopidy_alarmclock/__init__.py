@@ -31,7 +31,7 @@ class Extension(ext.Extension):
         return schema
 
     def setup(self, registry):
-        alarm_manager = AlarmManager()
+        alarm_manager = AlarmManager(self.__class__)
         msg_store = MessageStore()
         registry.add('http:app', {
             'name': self.ext_name,

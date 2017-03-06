@@ -7,6 +7,8 @@ import re
 import tornado.template
 import tornado.web
 
+from alarm_manager import parse_time
+
 
 template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
@@ -15,6 +17,7 @@ MESSAGES = {
     'ok': (u'Alarm has been properly set.', 'success'),
     'format': (u'The date\'s format you specified is incorrect.', 'danger'),
     'cancel': (u'Alarm has been canceled.', 'success'),
+    'bad': (u'The request was invalid.', 'danger'),
 }
 
 
@@ -47,41 +50,56 @@ class MainRequestHandler(BaseRequestHandler):
         ))
 
 
+class DeleteAlarmRequestHandler(BaseRequestHandler):
+    def post(self):
+        alarmidx = int(self.get_argument('alarm', -1))
+        if not 0 <= alarmidx < len(self.alarm_manager.alarms):
+            self.send_message('bad')
+            return
+        del self.alarm_manager.alarms[alarmidx]
+        self.alarm_manager.save_alarms()
+        self.send_message('cancel')
+
+
+class NewAlarmRequestHandler(BaseRequestHandler):
+    def post(self):
+        self.alarm_manager.create_alarm()
+        self.send_message('ok')
+
+
 class SetAlarmRequestHandler(BaseRequestHandler):
     def post(self):
+        # FIXME: Code duplication
+        alarmidx = int(self.get_argument('alarm', -1))
+        if not 0 <= alarmidx < len(self.alarm_manager.alarms):
+            self.send_message('bad')
+            return
+        alarm = self.alarm_manager.alarms[alarmidx]
+
+        enabled = bool(self.get_argument('enabled', False))
         playlist = self.get_argument('playlist', None)
 
-        time_string = self.get_argument('time', None)
-        # Based on RE found here http://stackoverflow.com/a/7536768/927592
-        matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5]?[0-9])$', time_string)
+        time = parse_time(self.get_argument('time', None))
         random_mode = bool(self.get_argument('random', False))
 
         # Get and sanitize volume and seconds to full volume
         volume = int(self.get_argument('volume', 100))
+        volume = max(min(volume, 100), 1)
+
         volume_increase_seconds = int(self.get_argument('incsec', 30))
-        if volume < 1 or volume > 100:
-            volume = 100
-        if volume_increase_seconds < 0 or volume_increase_seconds > 300:
-            volume_increase_seconds = 30
+        volume_increase_seconds = max(min(volume_increase_seconds, 300), 0)
 
-        if matched:
-            time_comp = map(lambda x: int(x), matched.groups())
-            time = datetime.time(hour=time_comp[0], minute=time_comp[1])
-
-            dt = datetime.datetime.combine(datetime.datetime.now(), time)
-            if datetime.datetime.now() >= dt:
-                dt += datetime.timedelta(days=1)
-
-            self.alarm_manager.set_alarm(dt, playlist, random_mode, volume, volume_increase_seconds)
+        if time is not None:
+            alarm.alarm_time = time
+            alarm.playlist = playlist
+            alarm.random_mode = random_mode
+            alarm.volume = volume
+            alarm.volume_increase_seconds = volume_increase_seconds
+            alarm.enabled = enabled
+            self.alarm_manager.save_alarms()
             self.send_message('ok')
         else:
             self.send_message('format')
-
-
-class CancelAlarmRequestHandler(BaseRequestHandler):
-    def get(self):
-        self.alarm_manager.cancel()
-        self.send_message('cancel')
 
 
 class MessageStore(object):
@@ -94,14 +112,15 @@ def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         # since all the RequestHandler-classes get the same arguments ...
         def bind(url, klass):
-            return (url, klass, {'config': config, 'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
+            return (url, klass, {'config': config, 'core': core, 'alarm_manager': alarm_manager.get_core(config, core), 'msg_store': msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
 
             bind('/', MainRequestHandler),
+            bind('/delete/', DeleteAlarmRequestHandler),
+            bind('/new/', NewAlarmRequestHandler),
             bind('/set/', SetAlarmRequestHandler),
-            bind('/cancel/', CancelAlarmRequestHandler),
         ]
 
     return app_factory
