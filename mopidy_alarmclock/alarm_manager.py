@@ -6,8 +6,8 @@ import datetime
 import json
 import logging
 import os
+import re
 from threading import Timer
-
 
 
 logger = logging.getLogger(__name__)
@@ -73,8 +73,10 @@ def alarm_decoder(o):
     if 'time' not in o:
         return o
 
+    # FIXME: These default values should come from the config, which probably
+    # means this needs to be a method of AlarmManager.
     a = Alarm()
-    a.alarm_time = datetime.datetime.strptime(o['time'], '%H:%M').time()
+    a.alarm_time = parse_time(o['time'])
     a.playlist = o['playlist']
     a.enabled = o.get('enabled', True)
     a.random_mode = o.get('random', False)
@@ -82,6 +84,19 @@ def alarm_decoder(o):
     a.volume_increase_seconds = o.get('volume_increase_seconds', 0)
     a.days = o.get('days', a.days)
     return a
+
+
+def parse_time(s):
+    # The better way to do this would be to use
+    #     datetime.datetime.strptime(s, '%H:%M').time()
+    # but for backwards compatibility, we need to be able to parse times
+    # written like 8:06 instead of 08:06, or for whatever reason, 8:6.
+    
+    # Based on RE found here http://stackoverflow.com/a/7536768/927592
+    m = re.match('^([01]?[0-9]|2[0-3]):([0-5]?[0-9])$', s)
+    if m:
+        return datetime.time(hour=int(m.group(1)), minute=int(m.group(2)))
+    return None
 
 
 class AlarmManager(object):
@@ -103,7 +118,13 @@ class AlarmManager(object):
         logger.info('Reading alarm configuration')
         try:
             dir = self.ext.get_data_dir(self.config)
-            with open(os.path.join(dir, 'alarms.json')) as fp:
+            path = os.path.join(dir, 'alarms.json')
+            if not os.path.exists(path):
+                # If first time upgrading to this version, we want to create
+                # a new alarm from the user's defaults
+                self.create_alarm()
+                return
+            with open(path) as fp:
                 self.alarms = json.load(fp, object_hook=alarm_decoder)
         except:
             logger.exception('Could not load saved alarms')
@@ -118,8 +139,17 @@ class AlarmManager(object):
             logger.exception('Could not save alarms')
 
     def create_alarm(self):
-        # TODO: Fill out defaults from config file
-        self.alarms.append(Alarm())
+        config = self.config[self.ext.ext_name]
+
+        a = Alarm()
+        a.enabled = True
+        a.alarm_time = parse_time(config['def_time'])
+        a.playlist = config['def_playlist']
+        a.random_mode = config['def_random']
+        a.volume = config['def_volume']
+        a.volume_increase_seconds = config['def_vol_inc_duration']
+
+        self.alarms.append(a)
         self.save_alarms()
 
     def get_core(self, config, core):

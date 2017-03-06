@@ -7,6 +7,8 @@ import re
 import tornado.template
 import tornado.web
 
+from alarm_manager import parse_time
+
 
 template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
@@ -77,9 +79,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         enabled = bool(self.get_argument('enabled', False))
         playlist = self.get_argument('playlist', None)
 
-        time_string = self.get_argument('time', None)
-        # Based on RE found here http://stackoverflow.com/a/7536768/927592
-        matched = re.match('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5]?[0-9])$', time_string)
+        time = parse_time(self.get_argument('time', None))
         random_mode = bool(self.get_argument('random', False))
 
         # Get and sanitize volume and seconds to full volume
@@ -89,9 +89,8 @@ class SetAlarmRequestHandler(BaseRequestHandler):
         volume_increase_seconds = int(self.get_argument('incsec', 30))
         volume_increase_seconds = max(min(volume_increase_seconds, 300), 0)
 
-        if matched:
-            time_comp = map(lambda x: int(x), matched.groups())
-            alarm.alarm_time = datetime.time(hour=time_comp[0], minute=time_comp[1])
+        if time is not None:
+            alarm.alarm_time = time
             alarm.playlist = playlist
             alarm.random_mode = random_mode
             alarm.volume = volume
