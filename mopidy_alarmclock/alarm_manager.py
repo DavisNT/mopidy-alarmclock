@@ -1,11 +1,14 @@
 from __future__ import division
 from __future__ import unicode_literals
 
+import collections
 import datetime
+import json
 import logging
 import os
-import time
 from threading import Timer
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -50,24 +53,81 @@ class Alarm(object):
         return self.formatted_ring_time + ' alarm'
 
 
+class AlarmEncoder(json.JSONEncoder):
+    def default(self, o):
+        if not isinstance(o, Alarm):
+            return super(AlarmEncoder, self).default(self, o)
+
+        return collections.OrderedDict([
+            ('time', o.alarm_time.strftime('%H:%M')),
+            ('playlist', o.playlist),
+            ('enabled', o.enabled),
+            ('random', o.random_mode),
+            ('volume', o.volume),
+            ('volume_increase_seconds', o.volume_increase_seconds),
+            ('days', o.days),
+        ])
+
+
+def alarm_decoder(o):
+    if 'time' not in o:
+        return o
+
+    a = Alarm()
+    a.alarm_time = datetime.datetime.strptime(o['time'], '%H:%M').time()
+    a.playlist = o['playlist']
+    a.enabled = o.get('enabled', True)
+    a.random_mode = o.get('random', False)
+    a.volume = o.get('volume', 100)
+    a.volume_increase_seconds = o.get('volume_increase_seconds', 0)
+    a.days = o.get('days', a.days)
+    return a
+
+
 class AlarmManager(object):
+    ext = None
     core = None
+    config = None
     alarms = None
     last_fired = None
 
-    def __init__(self):
-        self.alarms = [Alarm()]
+    def __init__(self, ext):
+        self.alarms = []
+        self.ext = ext
 
         # Start the timer
         self.last_fired = datetime.datetime.now()
         self.idle()
 
+    def load_alarms(self):
+        logger.info('Reading alarm configuration')
+        try:
+            dir = self.ext.get_data_dir(self.config)
+            with open(os.path.join(dir, 'alarms.json')) as fp:
+                self.alarms = json.load(fp, object_hook=alarm_decoder)
+        except:
+            logger.exception('Could not load saved alarms')
+
+    def save_alarms(self):
+        logger.info('Writing out alarm configuration')
+        try:
+            dir = self.ext.get_data_dir(self.config)
+            with open(os.path.join(dir, 'alarms.json'), 'w') as fp:
+                json.dump(self.alarms, fp, cls=AlarmEncoder, indent=2)
+        except:
+            logger.exception('Could not save alarms')
+
     def create_alarm(self):
         # TODO: Fill out defaults from config file
         self.alarms.append(Alarm())
+        self.save_alarms()
 
-    def get_core(self, core):
-        self.core = core
+    def get_core(self, config, core):
+        if self.core is None:
+            # First time loading
+            self.config = config
+            self.core = core
+            self.load_alarms()
         return self
 
     def get_seconds_since_midnight(self):

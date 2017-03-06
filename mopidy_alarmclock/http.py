@@ -55,6 +55,7 @@ class DeleteAlarmRequestHandler(BaseRequestHandler):
             self.send_message('bad')
             return
         del self.alarm_manager.alarms[alarmidx]
+        self.alarm_manager.save_alarms()
         self.send_message('cancel')
 
 
@@ -96,6 +97,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             alarm.volume = volume
             alarm.volume_increase_seconds = volume_increase_seconds
             alarm.enabled = enabled
+            self.alarm_manager.save_alarms()
             self.send_message('ok')
         else:
             self.send_message('format')
@@ -111,7 +113,7 @@ def factory_decorator(alarm_manager, msg_store):
     def app_factory(config, core):
         # since all the RequestHandler-classes get the same arguments ...
         def bind(url, klass):
-            return (url, klass, {'config': config, 'core': core, 'alarm_manager': alarm_manager.get_core(core), 'msg_store': msg_store})
+            return (url, klass, {'config': config, 'core': core, 'alarm_manager': alarm_manager.get_core(config, core), 'msg_store': msg_store})
 
         return [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
