@@ -6,10 +6,6 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/pypi/dm/Mopidy-AlarmClock.svg?style=flat
-    :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
-    :alt: Number of PyPI downloads
-
 .. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=develop
     :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
     :alt: Travis-CI build status
