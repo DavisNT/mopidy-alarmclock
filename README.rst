@@ -53,6 +53,30 @@ Usage
 
 Make sure that the `HTTP extension <http://docs.mopidy.com/en/latest/ext/http/>`_ is enabled. Then browse to the app on the Mopidy server (for instance, http://localhost:6680/alarmclock/).
 
+**WARNING! It is strongly recommended to use only local playlists with local media (files) for alarm clock.** 
+
+Althrough Mopidy-AlarmClock contains some safety measures against playlist/track inaccessibility (e.g. upon network outage) it is still much safer to use local media.
+
+License
+=============
+::
+
+   Copyright 2014 Mathieu Xhonneux
+   Copyright 2015-2018 Davis Mosenkovs
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
 Project resources
 =================
 
