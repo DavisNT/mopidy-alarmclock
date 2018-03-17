@@ -2,11 +2,12 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import datetime
+import logging
 import os
 import time
-import logging
-import mopidy
 from threading import Timer
+
+import mopidy
 
 
 # Enum of states
@@ -83,7 +84,7 @@ class AlarmManager(object):
 
         self.idle()
 
-    def play(self, fallback = False):
+    def play(self, fallback=False):
         self.logger.info("AlarmClock alarm started (fallback %s)", fallback)
         self.core.playback.stop()
         self.core.tracklist.clear()
@@ -111,7 +112,7 @@ class AlarmManager(object):
 
         self.core.playback.play()
 
-        if not fallback: # do fallback only once
+        if not fallback:  # do fallback only once
             self.logger.info("AlarmClock waiting for playback to start")
             time.sleep(0.5)
             waited = 0.5
@@ -143,7 +144,7 @@ class AlarmManager(object):
         current_volume = None
         try:
             current_volume = self.core.playback.volume.get()
-        except:
+        except Exception:
             pass
         if step_no == 0 or not isinstance(current_volume, int) or current_volume == int(round(target_volume * (step_no) / (number_of_steps + 1))):
             if step_no >= number_of_steps:  # this design should prevent floating-point edge-case bugs (in case such bugs could be possible here)

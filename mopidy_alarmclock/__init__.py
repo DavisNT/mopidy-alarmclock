@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import os
-
 from http import MessageStore, factory_decorator
 
 from alarm_manager import AlarmManager
