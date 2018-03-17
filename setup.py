@@ -29,6 +29,7 @@ setup(
         'setuptools',
         'Mopidy >= 0.19',
         'Pykka >= 1.1',
+        'monotonic >= 1.4',
     ],
     test_suite='nose.collector',
     tests_require=[
