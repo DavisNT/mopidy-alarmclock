@@ -152,20 +152,51 @@ class AlarmManagerTest(unittest.TestCase):
         core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
         core.playback.play.assert_called_once_with()
 
-        # Cleanup and re-setup
+        # Cleanup and re-setup (part 2 starts here)
         core.tracklist.add.reset_mock()
         core.playback.play.reset_mock()
+        core.playback.state.get.reset_mock()
+        core.playback.time_position.get.reset_mock()
+        core.playback.state.get.side_effect = lambda: PlaybackState.PLAYING
         core.playback.time_position.get.side_effect = lambda: 0  # simulate broken playback (stuck at 0 milliseconds)
 
         # Set alarm to PAST
         am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
 
-        # Ensure that tracks (including backup alarm) were added
+        # Ensure that tracks (including backup alarm) were added and playback started
         self.assertEqual(core.playlists.lookup.call_count, 3)
         self.assertEqual(core.tracklist.add.call_count, 2)
         core.tracklist.add.assert_any_call('Tracks 811, 821, 823, 827, 829, 839')
         core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
         self.assertEqual(core.playback.play.call_count, 2)
+
+        # Ensure playback was checked around 31 times (tolerate 1 sec possible slowness of build env)
+        self.assertGreaterEqual(core.playback.state.get.call_count, 30)
+        self.assertLess(core.playback.state.get.call_count, 32)
+        self.assertGreaterEqual(core.playback.time_position.get.call_count, 30)
+        self.assertLess(core.playback.time_position.get.call_count, 32)
+
+        # Cleanup and re-setup (part 3 starts here)
+        core.tracklist.add.reset_mock()
+        core.playback.play.reset_mock()
+        core.playback.state.get.reset_mock()
+        core.playback.time_position.get.reset_mock()
+        core.playback.state.get.side_effect = lambda: time.sleep(31)  # simulate broken playback (return invalid state after 31 second delay)
+        core.playback.time_position.get.side_effect = lambda: 234
+
+        # Set alarm to PAST
+        am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
+
+        # Ensure that tracks (including backup alarm) were added and playback started
+        self.assertEqual(core.playlists.lookup.call_count, 4)
+        self.assertEqual(core.tracklist.add.call_count, 2)
+        core.tracklist.add.assert_any_call('Tracks 811, 821, 823, 827, 829, 839')
+        core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
+        self.assertEqual(core.playback.play.call_count, 2)
+
+        # Ensure playback was checked exactly 2 times (due to delay during checking)
+        self.assertEqual(core.playback.state.get.call_count, 2)
+        self.assertEqual(core.playback.time_position.get.call_count, 0)  # actually this does not get called (because it is 2 operand in or)
 
     def test02_get_ring_time(self):
         playlist = 'Playlist URI'
