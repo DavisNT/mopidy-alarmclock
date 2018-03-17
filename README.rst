@@ -88,6 +88,12 @@ Project resources
 Changelog
 =========
 
+v0.1.7
+----------------------------------------
+
+- Play `backup alarm sound <http://soundbible.com/1787-Annoying-Alarm-Clock.html>`_ when playback cannot be started (within 30 seconds or more).
+- Added warning to readme that only local playlists/media should be used for alarm clock.
+
 v0.1.6
 ----------------------------------------
 
