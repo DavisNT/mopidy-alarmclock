@@ -9,7 +9,7 @@ from threading import Timer
 
 import monotonic
 
-import mopidy
+from mopidy.core import PlaybackState
 
 
 # Enum of states
@@ -121,7 +121,7 @@ class AlarmManager(object):
             try:
                 starttime = monotonic.monotonic()
                 time.sleep(0.5)
-                while self.core.playback.state.get() != mopidy.core.PlaybackState.PLAYING or self.core.playback.time_position.get() < 100:  # in some cases this check will cause a notable delay
+                while self.core.playback.state.get() != PlaybackState.PLAYING or self.core.playback.time_position.get() < 100:  # in some cases this check will cause a notable delay
                     self.logger.info("AlarmClock has been waiting for %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic() - starttime, waited)
                     if waited > 30 or (waited > 0.5 and monotonic.monotonic() - starttime > 30):  # ensure EITHER delay is more than 30 seconds OR at least 2 times above line has been executed
                         raise Exception("Timeout")
