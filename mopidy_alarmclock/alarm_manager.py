@@ -7,6 +7,7 @@ import os
 import time
 from threading import Timer
 
+import monotonic
 import mopidy
 
 
@@ -114,16 +115,22 @@ class AlarmManager(object):
 
         if not fallback:  # do fallback only once
             self.logger.info("AlarmClock waiting for playback to start")
-            time.sleep(0.5)
             waited = 0.5
-            while waited <= 30 and (self.core.playback.state != mopidy.core.PlaybackState.PLAYING or self.core.playback.time_position < 100):
+            starttime = 0
+            try:
+                starttime = monotonic.monotonic()
                 time.sleep(0.5)
-                waited += 0.5
-            if self.core.playback.state != mopidy.core.PlaybackState.PLAYING or self.core.playback.time_position < 100:
-                self.logger.info("AlarmClock playback did NOT start after %.1f seconds", waited)
+                while self.core.playback.state.get() != mopidy.core.PlaybackState.PLAYING or self.core.playback.time_position.get() < 100:  # in some cases this check will cause a notable delay
+                    self.logger.info("AlarmClock has been waiting for %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic()-starttime, waited)
+                    if waited > 30 or (waited > 0.5 and monotonic.monotonic()-starttime > 30):  # ensure EITHER delay is more than 30 seconds OR at least 2 times above line has been executed
+                        raise Exception("Timeout")
+                    time.sleep(1)
+                    waited += 1
+                self.logger.info("AlarmClock playback started within %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic()-starttime, waited)
+            except Exception as e:
+                self.logger.info("AlarmClock playback FAILED to start (waited inside AlarmClock %.2f sec), reason: %s", waited, e)
                 self.play(True)
                 return
-            self.logger.info("AlarmClock playback started within %.1f seconds", waited)
 
         self.adjust_volume(self.volume, self.volume_increase_seconds, 0)
 
