@@ -8,6 +8,8 @@ import unittest
 
 import mock
 
+from mopidy.core import PlaybackState
+
 from mopidy_alarmclock.alarm_manager import AlarmManager
 
 
@@ -98,6 +100,8 @@ class AlarmManagerTest(unittest.TestCase):
     def test02_set_alarm__empty_playlist(self):
         core = mock.Mock()
         playlist = 'Playlist URI'
+        core.playback.state.get.side_effect = lambda: PlaybackState.PLAYING
+        core.playback.time_position.get.side_effect = lambda: 234
         core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
         core.tracklist.length.get.side_effect = lambda: 4
         self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
@@ -121,7 +125,7 @@ class AlarmManagerTest(unittest.TestCase):
         # Set alarm to PAST
         am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
 
-        # Ensure that tracks were added
+        # Ensure that tracks (including backup alarm) were added
         self.assertEqual(core.playlists.lookup.call_count, 3)
         self.assertEqual(core.tracklist.add.call_count, 2)
         core.tracklist.add.assert_any_call('Tracks 811, 821, 823, 827, 829, 839')
@@ -142,6 +146,8 @@ class AlarmManagerTest(unittest.TestCase):
     def test03_cancel(self):
         core = mock.Mock()
         playlist = 'Playlist URI'
+        core.playback.state.get.side_effect = lambda: PlaybackState.PLAYING
+        core.playback.time_position.get.side_effect = lambda: 234
         threadcount = threading.active_count()
 
         am = AlarmManager()
@@ -436,6 +442,8 @@ class AlarmManagerTest(unittest.TestCase):
     def test04__integration_1(self):
         core = mock.Mock()
         playlist = 'Playlist URI'
+        core.playback.state.get.side_effect = lambda: PlaybackState.PLAYING
+        core.playback.time_position.get.side_effect = lambda: 234
         core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
         self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
         threadcount = threading.active_count()
