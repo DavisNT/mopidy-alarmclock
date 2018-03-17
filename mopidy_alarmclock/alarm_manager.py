@@ -8,6 +8,7 @@ import time
 from threading import Timer
 
 import monotonic
+
 import mopidy
 
 
@@ -121,12 +122,12 @@ class AlarmManager(object):
                 starttime = monotonic.monotonic()
                 time.sleep(0.5)
                 while self.core.playback.state.get() != mopidy.core.PlaybackState.PLAYING or self.core.playback.time_position.get() < 100:  # in some cases this check will cause a notable delay
-                    self.logger.info("AlarmClock has been waiting for %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic()-starttime, waited)
-                    if waited > 30 or (waited > 0.5 and monotonic.monotonic()-starttime > 30):  # ensure EITHER delay is more than 30 seconds OR at least 2 times above line has been executed
+                    self.logger.info("AlarmClock has been waiting for %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic() - starttime, waited)
+                    if waited > 30 or (waited > 0.5 and monotonic.monotonic() - starttime > 30):  # ensure EITHER delay is more than 30 seconds OR at least 2 times above line has been executed
                         raise Exception("Timeout")
                     time.sleep(1)
                     waited += 1
-                self.logger.info("AlarmClock playback started within %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic()-starttime, waited)
+                self.logger.info("AlarmClock playback started within %.2f seconds (waited inside AlarmClock %.2f sec)", monotonic.monotonic() - starttime, waited)
             except Exception as e:
                 self.logger.info("AlarmClock playback FAILED to start (waited inside AlarmClock %.2f sec), reason: %s", waited, e)
                 self.play(True)
