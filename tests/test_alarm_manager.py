@@ -132,6 +132,41 @@ class AlarmManagerTest(unittest.TestCase):
         core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
         core.playback.play.assert_called_once_with()
 
+    def test02_set_alarm__broken_playback(self):
+        core = mock.Mock()
+        playlist = 'Playlist URI'
+        core.playback.state.get.side_effect = lambda: PlaybackState.PLAYING
+        core.playback.time_position.get.side_effect = lambda: 234
+        core.playlists.lookup('Playlist URI').get().tracks = 'Tracks 811, 821, 823, 827, 829, 839'
+        core.tracklist.length.get.side_effect = lambda: 4
+        self.assertEqual(core.playlists.lookup.call_count, 1)  # First call when setting up the Mock
+
+        am = AlarmManager()
+        am.get_core(core)
+
+        # Set alarm to PAST
+        am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
+
+        # Ensure that tracks were added
+        self.assertEqual(core.playlists.lookup.call_count, 2)
+        core.tracklist.add.assert_called_once_with('Tracks 811, 821, 823, 827, 829, 839')
+        core.playback.play.assert_called_once_with()
+
+        # Cleanup and re-setup
+        core.tracklist.add.reset_mock()
+        core.playback.play.reset_mock()
+        core.playback.time_position.get.side_effect = lambda: 0  # simulate broken playback (stuck at 0 milliseconds)
+
+        # Set alarm to PAST
+        am.set_alarm(datetime.datetime(2000, 4, 28, 7, 59, 15, 324341), playlist, False, 83, 0)
+
+        # Ensure that tracks (including backup alarm) were added
+        self.assertEqual(core.playlists.lookup.call_count, 3)
+        self.assertEqual(core.tracklist.add.call_count, 2)
+        core.tracklist.add.assert_any_call('Tracks 811, 821, 823, 827, 829, 839')
+        core.tracklist.add.assert_called_with(None, 0, 'file://' + os.path.dirname(os.path.dirname(__file__)) + '/mopidy_alarmclock/backup-alarm.mp3')
+        self.assertEqual(core.playback.play.call_count, 2)
+
     def test02_get_ring_time(self):
         playlist = 'Playlist URI'
 
