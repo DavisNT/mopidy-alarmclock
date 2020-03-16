@@ -1,11 +1,8 @@
-
-
 import os
-from .http import MessageStore, factory_decorator
+from mopidy import config, ext
 
 from .alarm_manager import AlarmManager
-
-from mopidy import config, ext
+from .http import MessageStore, factory_decorator
 
 
 __version__ = '0.1.7'

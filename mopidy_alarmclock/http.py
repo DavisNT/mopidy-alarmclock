@@ -1,5 +1,3 @@
-
-
 import datetime
 import os
 import re
@@ -36,9 +34,9 @@ class MainRequestHandler(BaseRequestHandler):
         if self.msg_store.msg_code and self.msg_store.msg_code in MESSAGES:
             message = MESSAGES[self.msg_store.msg_code]
             self.msg_store.msg_code = None
-        
+
         playlists = self.core.playlists.as_list().get()
-        
+
         self.write(template_loader.load('index.html').generate(
             playlists=playlists,
             alarm_manager=self.alarm_manager,
