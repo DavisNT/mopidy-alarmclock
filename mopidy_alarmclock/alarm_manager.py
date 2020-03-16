@@ -99,18 +99,18 @@ class AlarmManager(object):
                 raise Exception('Tracklist empty')
         except Exception as e:
             self.logger.info("AlarmClock using backup alarm, reason: %s", e)
-            self.core.tracklist.add(None, 0, 'file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3'))
+            self.core.tracklist.add(None, 0, ['file://' + os.path.join(os.path.dirname(__file__), 'backup-alarm.mp3')])
 
-        self.core.tracklist.consume = False
-        self.core.tracklist.single = False
-        self.core.tracklist.repeat = True
+        self.core.tracklist.set_consume(False)
+        self.core.tracklist.set_single(False)
+        self.core.tracklist.set_repeat(True)
 
-        self.core.tracklist.random = self.random_mode
-        if self.core.tracklist.random:
+        self.core.tracklist.set_random(self.random_mode)
+        if self.random_mode:
             self.core.playback.next()
 
         self.core.mixer.set_mute(False)
-        self.core.mixer.set_volume(0).get()
+        self.core.mixer.set_volume(0)
 
         self.core.playback.play()
 
@@ -157,9 +157,9 @@ class AlarmManager(object):
         if step_no == 0 or not isinstance(current_volume, int) or current_volume == int(round(target_volume * (step_no) / (number_of_steps + 1))):
             if step_no >= number_of_steps:  # this design should prevent floating-point edge-case bugs (in case such bugs could be possible here)
                 self.logger.info("AlarmClock increasing volume to target volume %d", target_volume)
-                self.core.mixer.set_volume(target_volume).get()
+                self.core.mixer.set_volume(target_volume)
             else:
                 self.logger.info("AlarmClock increasing volume to %d", int(round(target_volume * (step_no + 1) / (number_of_steps + 1))))
-                self.core.mixer.set_volume(int(round(target_volume * (step_no + 1) / (number_of_steps + 1)))).get()
+                self.core.mixer.set_volume(int(round(target_volume * (step_no + 1) / (number_of_steps + 1))))
                 t = Timer(increase_duration / number_of_steps, self.adjust_volume, [target_volume, increase_duration, step_no + 1])
                 t.start()
