@@ -1,4 +1,5 @@
 import os
+
 from mopidy import config, ext
 
 from .alarm_manager import AlarmManager
