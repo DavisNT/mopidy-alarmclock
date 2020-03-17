@@ -33,7 +33,7 @@ class HttpTest(unittest.TestCase):
 
         handler.post()
 
-        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 8, 0), 'Playlist URI', True, 81, 23)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 5, 3, 8, 0), 'Playlist URI', True, 81, 23)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
@@ -49,7 +49,7 @@ class HttpTest(unittest.TestCase):
 
         # WARNING! Default configuration must be also updated in README.rst and ext.conf
         # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
-        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 5, 7), 'Playlist URI', False, 100, 30)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 5, 4, 5, 7), 'Playlist URI', False, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
@@ -66,7 +66,7 @@ class HttpTest(unittest.TestCase):
         # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
         # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
         # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py AND HTML form of index.html
-        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 03, 23, 59), 'Playlist URI', True, 100, 30)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 5, 3, 23, 59), 'Playlist URI', True, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
@@ -83,7 +83,7 @@ class HttpTest(unittest.TestCase):
         # WARNING! Default configuration (AND RANGES) must be also updated in README.rst and ext.conf
         # WARNING! Internal defaults of volume and volume increase seconds are in SetAlarmRequestHandler of http.py
         # WARNING! Ranges of volume and volume increase seconds are in SetAlarmRequestHandler of http.py AND HTML form of index.html
-        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 05, 04, 0, 0), 'Playlist URI', True, 100, 30)
+        alarm_manager.set_alarm.assert_called_once_with(datetime.datetime(2015, 5, 4, 0, 0), 'Playlist URI', True, 100, 30)
         self.assertEqual(msg_store.msg_code, 'ok')
         handler.redirect.assert_called_once_with('/alarmclock/')
 
