@@ -9,8 +9,9 @@ env:
   - TOX_ENV=flake8
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y python-gi
+  - export PYUSRSITEDIR=$(python -m site --user-site)
+  - mkdir -p $PYUSRSITEDIR
+  - "echo \"import sys; import mock; sys.modules['gi'] = mock.Mock(); sys.modules['gi.repository'] = mock.Mock(); sys.modules['gi.repository'].Gst.version.side_effect = lambda: (1, 14, 0)\" > ${PYUSRSITEDIR}/usercustomize.py"
 
 install:
   - "pip install tox"
