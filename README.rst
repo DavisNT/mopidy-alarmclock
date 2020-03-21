@@ -62,7 +62,7 @@ License
 ::
 
    Copyright 2014 Mathieu Xhonneux
-   Copyright 2015-2018 Davis Mosenkovs
+   Copyright 2015-2020 Davis Mosenkovs
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -87,6 +87,11 @@ Project resources
 
 Changelog
 =========
+
+v0.1.8
+----------------------------------------
+
+- Upgraded to Mopidy 3.0+ and Python 3.7+.
 
 v0.1.7
 ----------------------------------------

@@ -6,7 +6,7 @@ from .alarm_manager import AlarmManager
 from .http import MessageStore, factory_decorator
 
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 
 class Extension(ext.Extension):
