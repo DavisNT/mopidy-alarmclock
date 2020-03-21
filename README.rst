@@ -6,6 +6,10 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Latest PyPI version
 
+.. image:: https://img.shields.io/pypi/dm/Mopidy-AlarmClock.svg?style=flat
+    :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
+    :alt: Number of PyPI downloads
+
 .. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=develop
     :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
     :alt: Travis-CI build status
@@ -14,7 +18,7 @@ Mopidy-AlarmClock
     :target: https://coveralls.io/r/DavisNT/mopidy-alarmclock
     :alt: Coveralls test coverage
 
-A Mopidy extension for using it as an alarm clock.
+A `Mopidy <https://www.mopidy.com/>`_ extension for using it as an alarm clock.
 
 Mopidy-AlarmClock was originally created by `Mathieu Xhonneux <https://github.com/Zashas>`_ and now is maintained by `Davis Mosenkovs <https://github.com/DavisNT>`_.
 
