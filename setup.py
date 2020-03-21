@@ -23,6 +23,7 @@ setup(
     packages=find_packages(exclude=['tests', 'tests.*']),
     zip_safe=False,
     include_package_data=True,
+    python_requires='>= 3.7',
     install_requires=[
         'setuptools',
         'Mopidy >= 3.0',
@@ -44,7 +45,7 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Topic :: Multimedia :: Sound/Audio :: Players',
     ],
 )
