@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import datetime
 import os
 import re
@@ -12,9 +10,9 @@ template_directory = os.path.join(os.path.dirname(__file__), 'templates')
 template_loader = tornado.template.Loader(template_directory)
 
 MESSAGES = {
-    'ok': (u'Alarm has been properly set.', 'success'),
-    'format': (u'The date\'s format you specified is incorrect.', 'danger'),
-    'cancel': (u'Alarm has been canceled.', 'success'),
+    'ok': ('Alarm has been properly set.', 'success'),
+    'format': ('The date\'s format you specified is incorrect.', 'danger'),
+    'cancel': ('Alarm has been canceled.', 'success'),
 }
 
 
@@ -37,7 +35,7 @@ class MainRequestHandler(BaseRequestHandler):
             message = MESSAGES[self.msg_store.msg_code]
             self.msg_store.msg_code = None
 
-        playlists = self.core.playlists.playlists.get()
+        playlists = self.core.playlists.as_list().get()
 
         self.write(template_loader.load('index.html').generate(
             playlists=playlists,
@@ -65,7 +63,7 @@ class SetAlarmRequestHandler(BaseRequestHandler):
             volume_increase_seconds = 30
 
         if matched:
-            time_comp = map(lambda x: int(x), matched.groups())
+            time_comp = [int(x) for x in matched.groups()]
             time = datetime.time(hour=time_comp[0], minute=time_comp[1])
 
             dt = datetime.datetime.combine(datetime.datetime.now(), time)

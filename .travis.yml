@@ -1,16 +1,19 @@
 language: python
-sudo: true
+os: linux
+dist: bionic
 
 python:
-  - "2.7_with_system_site_packages"
+  - "3.7"
 
 env:
-  - TOX_ENV=py27
+  - TOX_ENV=py37
   - TOX_ENV=flake8
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y python-gi python-gst-1.0 gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tools
+  # Mock Python gi package
+  - export PYUSRSITEDIR=$(python -m site --user-site)
+  - mkdir -p $PYUSRSITEDIR
+  - "echo \"import sys; import mock; sys.modules['gi'] = mock.Mock(); sys.modules['gi.repository'] = mock.Mock(); sys.modules['gi.repository'].Gst.version.side_effect = lambda: (1, 14, 0)\" > ${PYUSRSITEDIR}/usercustomize.py"
 
 install:
   - "pip install tox"
@@ -19,4 +22,4 @@ script:
   - "tox -e $TOX_ENV"
 
 after_success:
-  - "if [ $TOX_ENV == 'py27' ]; then pip install coveralls requests==2.2.1; coveralls; fi"
+  - "if [ $TOX_ENV == 'py37' ]; then pip install coveralls requests; coveralls; fi"
