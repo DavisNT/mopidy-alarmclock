@@ -50,7 +50,7 @@
               <label class="col-md-4 control-label" for="playlist">Playlist</label>
               <div class="col-md-4">
                 <select id="playlist" name="playlist" class="form-control">
-                    {% for playlist in playlists %}
+                    {% for playlist in playlists.as_list().get() %}
                         <option value="{{ playlist.uri }}"{% if config['def_playlist'] == playlist.uri or config['def_playlist'] == playlist.name %} selected="selected"{% end %}>{{ playlist.name }}</option>
                     {% end %}
                 </select>
