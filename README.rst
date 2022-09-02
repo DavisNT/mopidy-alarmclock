@@ -10,9 +10,9 @@ Mopidy-AlarmClock
     :target: https://pypi.python.org/pypi/Mopidy-AlarmClock/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/DavisNT/mopidy-alarmclock.svg?branch=develop
-    :target: https://travis-ci.org/DavisNT/mopidy-alarmclock
-    :alt: Travis-CI build status
+.. image:: https://img.shields.io/github/workflow/status/DavisNT/mopidy-alarmclock/Python%20build/develop.svg?style=flat
+    :target: https://github.com/DavisNT/mopidy-alarmclock/actions/workflows/ci.yml
+    :alt: GitHub Actions build status
 
 .. image:: https://coveralls.io/repos/DavisNT/mopidy-alarmclock/badge.svg?branch=develop
     :target: https://coveralls.io/r/DavisNT/mopidy-alarmclock
